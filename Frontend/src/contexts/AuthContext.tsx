@@ -35,24 +35,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
+          cache: "no-store",
         }
       );
 
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Login failed");
+      }
+
       const res = await response.json();
+      console.log("Login response:", res);
 
       if (res.success) {
-        setAuthCookie(res.token);
-        setUser(res.user);
-        router.push(res.user.role === "admin" ? "/admin" : "/dashboard");
+        setAuthCookie(res?.data?.accessToken);
+        setUser(res?.data?.user);
+        router.push(res?.data?.user?.role === "admin" ? "/admin" : "/user");
       } else {
-        throw new Error(res.message);
+        throw new Error(res.message || "Login failed");
       }
     } catch (error) {
       console.error("Login failed:", error);
