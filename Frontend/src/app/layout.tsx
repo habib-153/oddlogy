@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
+import Providers from "@/contexts/Provider";
 
 export const metadata: Metadata = {
   title: "Oddlogy: Learn Skills with Expert-Led Online Courses",
@@ -16,8 +16,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
 
-  const session = await getServerSession(authOptions)
   return (
     <html suppressHydrationWarning lang="en" data-theme="light">
       <head>
@@ -30,14 +30,16 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <Navbar session={session} />
-        <div className="min-h-screen w-[95%] mx-auto">{children}</div>
-        <div
-          id="button"
-          className="fixed bottom-8 right-8 bg-[#D2DD27] w-12 h-12 rounded flex items-center justify-center cursor-pointer opacity-0 invisible transition-all"
-        >
-          <i className="fas fa-chevron-up text-gray-800"></i>
-        </div>
+        <Providers session={session}>
+          <Navbar />
+          <div className="min-h-screen w-[95%] mx-auto">{children}</div>
+          <div
+            id="button"
+            className="fixed bottom-8 right-8 bg-[#D2DD27] w-12 h-12 rounded flex items-center justify-center cursor-pointer opacity-0 invisible transition-all"
+          >
+            <i className="fas fa-chevron-up text-gray-800"></i>
+          </div>
+        </Providers>
       </body>
     </html>
   );

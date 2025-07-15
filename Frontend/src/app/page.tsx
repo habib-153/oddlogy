@@ -146,7 +146,7 @@ const HomePage = () => {
           products={skillDevelopmentCourses}
         />
 
-        <TestimonialCarousel />
+        {/* <TestimonialCarousel /> */}
         <ProductGrid
           title="Free Courses For HSC & Admission Candidate"
           products={hscCourses}
