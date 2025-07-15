@@ -1,6 +1,6 @@
 'use server'
 
-import { UserData } from "@/app/register/page"
+import { UserData } from "@/types/auth"
 
 export const registerUser = async (data : UserData) => {
     const res = await fetch(`${process.env.BACKEND_URL}/auth/register`, {

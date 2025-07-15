@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
+import LayoutWrapper from "@/components/LayoutWrapper";
 
 export const metadata: Metadata = {
   title: "Oddlogy: Learn Skills with Expert-Led Online Courses",
@@ -30,8 +30,9 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <Navbar session={session} />
-        <div className="min-h-screen w-[95%] mx-auto">{children}</div>
+        <LayoutWrapper session={session}>
+          {children}
+        </LayoutWrapper>
         <div
           id="button"
           className="fixed bottom-8 right-8 bg-[#D2DD27] w-12 h-12 rounded flex items-center justify-center cursor-pointer opacity-0 invisible transition-all"
