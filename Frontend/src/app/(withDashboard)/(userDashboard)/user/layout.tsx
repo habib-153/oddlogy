@@ -1,3 +1,4 @@
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Sidebar from "@/components/shared/Sidebar";
 import type { Metadata } from "next";
 
@@ -12,13 +13,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen my-2">
-      <div className="flex justify-between">
-        <div className="w-[20%]">
-          <Sidebar />
-        </div>
-        <div className="w-[80%] bg-base-200 rounded-box ml-2">{children}</div>
+    <ProtectedRoute>
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <main className="flex-1 p-8">{children}</main>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

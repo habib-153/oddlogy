@@ -16,8 +16,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
 
-  const session = await getServerSession(authOptions)
   return (
     <html suppressHydrationWarning lang="en" data-theme="light">
       <head>

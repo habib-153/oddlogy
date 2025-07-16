@@ -1,21 +1,53 @@
 import { NextAuthOptions } from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
-  // Configure one or more authentication providers
   providers: [
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
-    }),
     GoogleProvider({
-      clientId: process.env.Google_ID as string,
-      clientSecret: process.env.Google_SECRET as string,
+      clientId: process.env.Google_ID!,
+      clientSecret: process.env.Google_SECRET!,
     }),
   ],
+  callbacks: {
+    async jwt({ token, account, profile }) {
+      if (account) {
+        token.id = profile?.sub || token.id;
+        token.role = "USER"; // Set default role for Google users
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+  },
   pages: {
-    signIn: "/login"
+    signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      role?: string;
+    };
+  }
+
+  interface User {
+    role?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    role?: string;
+  }
+}

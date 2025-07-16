@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type UserProps = {
   name?: string | null | undefined;
@@ -12,12 +13,19 @@ type UserProps = {
   image?: string | null | undefined;
 };
 
-export default function Header({
-  session,
-}: {
-  session: { user?: UserProps } | null;
-}) {
+export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter()
+  const { data: session, status } = useSession();
+
+  const handleLogout = async () => {
+    await signOut({
+      redirect: false,
+      callbackUrl: "/",
+    });
+    router.push("/");
+    router.refresh(); 
+  };
 
   return (
     <header className="bg-white py-4 shadow-sm border-b border-gray-200">
@@ -64,7 +72,6 @@ export default function Header({
               isOpen ? "flex" : "hidden"
             )}
           >
-            
             <Link
               href="/courses"
               className="text-gray-800 hover:text-[#D2DD27] font-semibold"
@@ -106,20 +113,21 @@ export default function Header({
                 <i className="fa fa-phone-alt mr-1"></i> 01818221949
               </span>
             </Link>
-            {session?.user ? (
+
+            {status === "authenticated" ? (
               <button
-                onClick={() => signOut()}
+                onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors"
               >
                 Logout
               </button>
             ) : (
-              <Link
-                href="/login"
+              <button
+                onClick={() => router.push("/login")}
                 className="bg-brand-primary text-black hover:text-white hover:bg-brand-primary-dark font-bold py-2 px-4 rounded transition-colors"
               >
                 Login
-              </Link>
+              </button>
             )}
           </div>
         </nav>

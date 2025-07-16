@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 export type TModule = {
-  _id?: string;
+  _id?: Types.ObjectId;
   name: string;
   course: Types.ObjectId;
   video_url: string;
