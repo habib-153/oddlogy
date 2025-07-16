@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { useCourses } from "@/hooks/useCourses";
+import { useCourses } from "@/hooks/courses.hook";
 import { TCourse, TCourseCategory } from "@/types/course";
 import ProductGrid from "@/components/sections/ProductGrid";
 

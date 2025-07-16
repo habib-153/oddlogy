@@ -6,7 +6,6 @@ export async function getAllCourses(category?: string): Promise<TCourse[]> {
     ? `/courses?courseCategory=${encodeURIComponent(category)}`:
      "/courses";
   const res = await axiosInstance.get(url);
-  console.log(res)
   return res.data.data?.result || res.data.data || [];
 }
 

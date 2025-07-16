@@ -55,9 +55,8 @@ export function ProductCard({
           onClick={() => setIsLiked(!isLiked)}
         >
           <Heart
-            className={`h-4 w-4 ${
-              isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
-            }`}
+            className={`h-4 w-4 ${isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
+              }`}
           />
         </button>
 
@@ -73,16 +72,15 @@ export function ProductCard({
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
-              className={`h-4 w-4 ${
-                i < rating ? "text-[#e52d53] fill-[#e52d53]" : "text-gray-300"
-              }`}
+              className={`h-4 w-4 ${i < rating ? "text-[#e52d53] fill-[#e52d53]" : "text-gray-300"
+                }`}
             />
           ))}
         </div>
 
         <h3 className="font-bold text-lg truncate">
           <Link
-            href="#"
+            href={`/courses/${typeof window !== "undefined" ? window.location.pathname.split("/")[2] : ""}`}
             className="text-gray-900 hover:text-[#e52d53] transition-colors"
           >
             {title}
