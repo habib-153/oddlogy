@@ -1,9 +1,10 @@
 'use server';
 import { jwtDecode } from "jwt-decode";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 
-export const setAuthCookie = (token: string) => {
-  cookies().set("auth-token", token, {
+export const setAuthCookie = async (token: string) => {
+  (await cookies()).set("auth-token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
@@ -11,16 +12,17 @@ export const setAuthCookie = (token: string) => {
   });
 };
 
-export const getAuthCookie = () => {
-  return cookies().get("auth-token");
+export const getAuthCookie = async () => {
+  return (await cookies()).get("auth-token");
 };
 
-export const removeAuthCookie = () => {
-  cookies().delete("auth-token");
+export const removeAuthCookie = async () => {
+  (await cookies()).delete("auth-token");
 };
 
 export const getCurrentUser = async () => {
-    const accessToken = await getAuthCookie()?.value
+    const cookie = await getAuthCookie();
+    const accessToken = cookie?.value;
 
     let decodedToken = null;
 
