@@ -2,6 +2,7 @@
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/shared/Navbar";
 import Providers from "@/contexts/Provider";
+import QueryProvider from "@/contexts/QueryProvider";
 
 interface LayoutWrapperProps {
     children: React.ReactNode;
@@ -21,10 +22,13 @@ const LayoutWrapper = ({ children, session }: LayoutWrapperProps) => {
     }
 
     return (
-        <Providers session={session}>
-            <Navbar />
-            <div className="min-h-screen w-[95%] mx-auto">{children}</div>
-        </Providers>
+        <QueryProvider>
+            <Providers session={session}>
+                <Navbar />
+                <div className="min-h-screen w-[95%] mx-auto">{children}</div>
+            </Providers>
+        </QueryProvider>
+
     );
 };
 

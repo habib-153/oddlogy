@@ -1,26 +1,25 @@
-import { Types } from 'mongoose';
-type TCourseStatus = 'in-progress' | 'completed' | 'not-started';
-type TCourseType = 'free' | 'paid'
-type TCourseCategory = 'HSC' | "Admission" | 'Skill Development' | 'Others';
+export type TCourseStatus = 'in-progress' | 'completed' | 'not-started';
+export type TCourseType = 'free' | 'paid' | 'subscription';
+export type TCourseCategory = 'HSC' | 'Admission' | 'Skill Development' | 'Others';
 
-type TCourseMedia = {
+export type TCourseMedia = {
   banner: string;
   intro_video: string;
   thumbnail: string;
 };
 
-type TPrerequisite = {
-  course: Types.ObjectId;
+export type TPrerequisite = {
+  course: string;
 };
 
 export type TCourse = {
   _id?: string;
   title: string;
   description: string;
-  instructor: Types.ObjectId;
-  students: Types.ObjectId[];
+  instructor: any;
+  students: any[];
   moduleCount: number;
-  modules: Types.ObjectId[];
+  modules: any[];
   courseType: TCourseType;
   courseCategory: TCourseCategory;
   courseStatus: TCourseStatus;
@@ -29,8 +28,8 @@ export type TCourse = {
   price?: number;
   salePrice?: number;
   studentEnrolled: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
   isCompleted?: boolean;
   isDeleted?: boolean;
 };

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post(
   '/',
-  auth(USER_ROLE.ADMIN, USER_ROLE.INSTRUCTOR),
+  // auth(USER_ROLE.ADMIN, USER_ROLE.INSTRUCTOR),
   CourseControllers.createCourse
 );
 

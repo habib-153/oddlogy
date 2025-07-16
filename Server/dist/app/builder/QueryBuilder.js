@@ -22,7 +22,7 @@ class QueryBuilder {
             searchTerm = this.query.searchTerm;
         }
         // {title: {$regex: searchTerm}}
-        // {genre: {$regex: searchTerm}}
+        // {Category: {$regex: searchTerm}}
         this.modelQuery = this.modelQuery.find({
             $or: searchableFields.map((field) => ({
                 [field]: new RegExp(searchTerm, 'i'),

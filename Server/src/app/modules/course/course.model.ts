@@ -59,7 +59,7 @@ const courseSchema = new Schema<TCourse>(
       enum: ['free', 'paid', 'subscription'],
       required: true,
     },
-    courseGenre: {
+    courseCategory: {
       type: String,
       enum: ['HSC', 'Admission', 'Skill Development', 'Others'],
       required: true,
