@@ -1,30 +1,22 @@
+
 "use client";
-import { registerUser } from "@/utils/registerUser";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { useForm } from "react-hook-form";
 import { UserData } from "@/types/auth";
 
 const RegisterForm = () => {
+    const { register: registerUserFunc, loading } = useAuth();
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<UserData>();
-    const router = useRouter();
 
     const onSubmit = async (data: UserData) => {
-        console.log(data);
-
         try {
-            const res = await registerUser(data);
-            console.log(res);
-            if (res.success) {
-                alert(res.message);
-                router.push("/login");
-            }
-        } catch (err: any) {
-            console.error(err.message);
-            throw new Error(err.message);
+            await registerUserFunc(data);
+        } catch (error) {
+            console.error("Registration failed:", error);
         }
     };
 
@@ -67,23 +59,7 @@ const RegisterForm = () => {
                 <span className="error-message">{errors.password.message}</span>
             )}
 
-            <input type="submit" className="btn" value="Sign up" />
-
-            <p className="social-text">Or sign in with</p>
-            <div className="social-media">
-                <a href="#" className="social-icon">
-                    <i className="fab fa-facebook"></i>
-                </a>
-                <a href="#" className="social-icon">
-                    <i className="fab fa-twitter"></i>
-                </a>
-                <a href="#" className="social-icon">
-                    <i className="fab fa-linkedin-in"></i>
-                </a>
-                <a href="#" className="social-icon">
-                    <i className="fab fa-google"></i>
-                </a>
-            </div>
+            <input type="submit" className="btn" value={loading ? "Loading..." : "Sign up"} disabled={loading} />
         </form>
     );
 };

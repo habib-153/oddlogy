@@ -1,6 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/shared/Navbar";
+import Providers from "@/contexts/Provider";
 
 interface LayoutWrapperProps {
     children: React.ReactNode;
@@ -12,14 +13,18 @@ const LayoutWrapper = ({ children, session }: LayoutWrapperProps) => {
     const isAuthPage = pathname === "/login" || pathname === "/register";
 
     if (isAuthPage) {
-        return <>{children}</>;
+        return (
+            <Providers session={session}>
+                {children}
+            </Providers>
+        );
     }
 
     return (
-        <>
-            <Navbar session={session} />
+        <Providers session={session}>
+            <Navbar />
             <div className="min-h-screen w-[95%] mx-auto">{children}</div>
-        </>
+        </Providers>
     );
 };
 

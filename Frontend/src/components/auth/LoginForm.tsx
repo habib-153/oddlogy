@@ -1,30 +1,22 @@
+
 "use client";
-import { loginUser } from "@/utils/loginUser";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { useForm } from "react-hook-form";
 import { FormValues } from "@/types/auth";
 
 const LoginForm = () => {
+    const { login, loading, googleLogin } = useAuth();
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<FormValues>();
-    const router = useRouter();
 
     const onSubmit = async (data: FormValues) => {
-        console.log(data);
         try {
-            const res = await loginUser(data);
-            console.log(res);
-            if (res?.data?.accessToken) {
-                alert(res.message);
-                localStorage.setItem("accessToken", res.accessToken);
-                router.push("/");
-            }
-        } catch (err: any) {
-            console.error(err.message);
-            throw new Error(err.message);
+            await login(data);
+        } catch (error) {
+            console.error("Login failed:", error);
         }
     };
 
@@ -55,20 +47,11 @@ const LoginForm = () => {
                 <span className="error-message">{errors.password.message}</span>
             )}
 
-            <input type="submit" value="Login" className="btn solid" />
+            <input type="submit" value={loading ? "Loading..." : "Login"} className="btn solid" disabled={loading} />
 
             <p className="social-text">Or login with</p>
             <div className="social-media">
-                <a href="#" className="social-icon">
-                    <i className="fab fa-facebook"></i>
-                </a>
-                <a href="#" className="social-icon">
-                    <i className="fab fa-twitter"></i>
-                </a>
-                <a href="#" className="social-icon">
-                    <i className="fab fa-linkedin-in"></i>
-                </a>
-                <a href="#" className="social-icon">
+                <a href="#" className="social-icon" onClick={e => { e.preventDefault(); googleLogin(); }}>
                     <i className="fab fa-google"></i>
                 </a>
             </div>

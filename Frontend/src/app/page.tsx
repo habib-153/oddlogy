@@ -9,7 +9,6 @@ import TestimonialCarousel from "@/components/sections/Testimonials";
 import { hscCourses, skillDevelopmentCourses } from "@/constants";
 
 const HomePage = () => {
-  // Sample product data
 
   // Feature section data
   const features = [
