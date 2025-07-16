@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 type TCourseStatus = 'in-progress' | 'completed' | 'not-started';
-type TCourseType = 'free' | 'paid' 
+type TCourseType = 'free' | 'paid'
+type TCourseGenre = 'HSC' | "Admission" | 'Skill Development' | 'Others';
 
 type TCourseMedia = {
   banner: string;
@@ -21,6 +22,7 @@ export type TCourse = {
   moduleCount: number;
   modules: Types.ObjectId[];
   courseType: TCourseType;
+  courseGenre: TCourseGenre;
   courseStatus: TCourseStatus;
   media: TCourseMedia;
   prerequisites?: TPrerequisite[];

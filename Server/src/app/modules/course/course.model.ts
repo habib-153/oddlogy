@@ -59,6 +59,11 @@ const courseSchema = new Schema<TCourse>(
       enum: ['free', 'paid', 'subscription'],
       required: true,
     },
+    courseGenre: {
+      type: String,
+      enum: ['HSC', 'Admission', 'Skill Development', 'Others'],
+      required: true,
+    },
     courseStatus: {
       type: String,
       enum: ['in-progress', 'completed', 'not-started'],
