@@ -1,134 +1,237 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Menu,
+  Phone,
+  User,
+  LogOut,
+  Settings,
+  BookOpen,
+  GraduationCap,
+  Monitor,
+} from "lucide-react";
 
-type UserProps = {
-  name?: string | null | undefined;
-  email?: string | null | undefined;
-  image?: string | null | undefined;
-};
+const navigationItems = [
+  { name: "Courses", href: "/courses", icon: BookOpen },
+  { name: "Skills", href: "/skills", icon: GraduationCap },
+  { name: "Admission", href: "/admission", icon: User },
+  { name: "Online Batch", href: "/online-batch", icon: Monitor },
+];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
   const { data: session, status } = useSession();
+  const { user: authUser, logout } = useAuth();
+
+  const user = session?.user || authUser;
+  const isAuthenticated = status === "authenticated" || !!authUser;
 
   const handleLogout = async () => {
-    await signOut({
-      redirect: false,
-      callbackUrl: "/",
-    });
+    if (session) {
+      await signOut({
+        redirect: false,
+        callbackUrl: "/",
+      });
+    }
+
+    if (authUser) {
+      logout();
+    }
+
     router.push("/");
-    router.refresh(); 
+    router.refresh();
+  };
+
+  const getUserInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
   return (
-    <header className="bg-white py-4 shadow-sm border-b border-gray-200">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
-        <nav className="flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/assets/img/logo-transparent.png"
-              alt="Oddology Logo"
-              width={150}
-              height={40}
-              className="h-10 w-auto"
-            />
+        <nav className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#D2DD27] to-[#A8B823] flex items-center justify-center">
+                <span className="text-sm font-bold text-black">O</span>
+              </div>
+              <span className="text-xl font-bold text-foreground">Oddlogy</span>
+            </div>
           </Link>
 
-          <button
-            title="menu"
-            className="md:hidden focus:outline-none"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <span
-              className={cn(
-                "block h-0.5 w-6 bg-black transition-all",
-                isOpen && "rotate-45 translate-y-1.5"
-              )}
-            ></span>
-            <span
-              className={cn(
-                "block h-0.5 w-6 bg-black my-1.5 transition-all",
-                isOpen && "opacity-0"
-              )}
-            ></span>
-            <span
-              className={cn(
-                "block h-0.5 w-6 bg-black transition-all",
-                isOpen && "-rotate-45 -translate-y-1.5"
-              )}
-            ></span>
-          </button>
-
-          <div
-            className={cn(
-              "flex-col md:flex md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 absolute md:static top-16 left-0 right-0 bg-white p-4 md:p-0 shadow-md md:shadow-none z-50 border-t md:border-t-0 border-gray-200",
-              isOpen ? "flex" : "hidden"
-            )}
-          >
-            <Link
-              href="/courses"
-              className="text-gray-800 hover:text-[#D2DD27] font-semibold"
-            >
-              Courses
-            </Link>
-            <Link
-              href="/skills"
-              className="text-gray-800 hover:text-[#D2DD27] font-semibold"
-            >
-              Skills
-            </Link>
-            <Link
-              href="/admission"
-              className="text-gray-800 hover:text-[#D2DD27] font-semibold"
-            >
-              Admission
-            </Link>
-            <Link
-              href="/online-batch"
-              className="text-gray-800 hover:text-[#D2DD27] font-semibold"
-            >
-              Online Batch
-            </Link>
-            <Link
-              href="/english"
-              className="text-gray-800 hover:text-[#D2DD27] font-semibold md:hidden"
-            >
-              English
-            </Link>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
 
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Right side actions */}
+          <div className="flex items-center space-x-4">
+            {/* Phone number - desktop only */}
             <Link
               href="tel:01818221949"
-              className="text-gray-800 hover:text-[#D2DD27]"
+              className="hidden lg:flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              <span className="flex items-center">
-                <i className="fa fa-phone-alt mr-1"></i> 01818221949
-              </span>
+              <Phone className="h-4 w-4" />
+              <span>01818221949</span>
             </Link>
 
-            {status === "authenticated" ? (
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors"
-              >
-                Logout
-              </button>
+            {/* User actions */}
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative h-8 w-8 rounded-full"
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={user?.image || ""}
+                        alt={user?.name || ""}
+                      />
+                      <AvatarFallback className="bg-[#D2DD27] text-black">
+                        {user?.name ? getUserInitials(user.name) : "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {user?.name || "User"}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="hover:bg-gray-300 hover:cursor-pointer"
+                    onClick={() => router.push("/dashboard")}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:bg-gray-300 hover:cursor-pointer"
+                    onClick={() => router.push("/settings")}
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="hover:bg-gray-300 hover:cursor-pointer"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <button
+              <Button
                 onClick={() => router.push("/login")}
-                className="bg-brand-primary text-black hover:text-white hover:bg-brand-primary-dark font-bold py-2 px-4 rounded transition-colors"
+                className="bg-[#D2DD27] text-black hover:bg-[#A8B823] font-medium"
               >
                 Login
-              </button>
+              </Button>
             )}
+
+            {/* Mobile menu */}
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="md:hidden"
+                  size="icon"
+                  onClick={() => setIsOpen(true)}
+                >
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col space-y-4 mt-8">
+                  <div className="flex items-center space-x-2 pb-4">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#D2DD27] to-[#A8B823] flex items-center justify-center">
+                      <span className="text-sm font-bold text-black">O</span>
+                    </div>
+                    <span className="text-xl font-bold">Oddlogy</span>
+                  </div>
+
+                  {navigationItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{item.name}</span>
+                      </Link>
+                    );
+                  })}
+
+                  <div className="pt-4 border-t">
+                    <Link
+                      href="tel:01818221949"
+                      className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+                    >
+                      <Phone className="h-4 w-4" />
+                      <span>01818221949</span>
+                    </Link>
+                  </div>
+
+                  {!isAuthenticated && (
+                    <div className="pt-4">
+                      <Button
+                        onClick={() => {
+                          router.push("/login");
+                          setIsOpen(false);
+                        }}
+                        className="w-full bg-[#D2DD27] text-black hover:bg-[#A8B823] font-medium"
+                      >
+                        Login
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </nav>
       </div>

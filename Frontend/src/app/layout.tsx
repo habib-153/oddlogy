@@ -4,6 +4,7 @@ import Navbar from "@/components/shared/Navbar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import LayoutWrapper from "@/components/LayoutWrapper";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Oddlogy: Learn Skills with Expert-Led Online Courses",
@@ -30,15 +31,14 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <LayoutWrapper session={session}>
-          {children}
-        </LayoutWrapper>
+        <LayoutWrapper session={session}>{children}</LayoutWrapper>
         <div
           id="button"
           className="fixed bottom-8 right-8 bg-[#D2DD27] w-12 h-12 rounded flex items-center justify-center cursor-pointer opacity-0 invisible transition-all"
         >
           <i className="fas fa-chevron-up text-gray-800"></i>
         </div>
+        <Toaster />
       </body>
     </html>
   );

@@ -1,6 +1,5 @@
 'use server';
 import { jwtDecode } from "jwt-decode";
-import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 
 export const setAuthCookie = async (token: string) => {

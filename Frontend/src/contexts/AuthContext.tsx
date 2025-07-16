@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   setAuthCookie,
   removeAuthCookie,
+  getCurrentUser,
 } from "@/utils/cookies";
 import { signIn } from "next-auth/react";
 
@@ -13,6 +14,7 @@ type User = {
   name: string;
   email: string;
   role: string;
+  image?: string;
 };
 
 type AuthContextType = {
@@ -30,6 +32,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const handleUser = async () => {
+    const user = await getCurrentUser();
+
+    setUser(user as User);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    handleUser();
+  }, [loading]);
 
   const login = async (data: { email: string; password: string }) => {
     try {
@@ -52,14 +65,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const res = await response.json();
-      console.log("Login response:", res);
 
       if (res.success) {
         setAuthCookie(res?.data?.accessToken);
         setUser(res?.data?.user);
         router.push(res?.data?.user?.role === "admin" ? "/admin" : "/user");
       } else {
-        throw new Error(res.message || "Login failed");
+        throw new Error(
+          res.message || "Login failed. Please check your credentials."
+        );
       }
     } catch (error) {
       console.error("Login failed:", error);
@@ -68,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }
   };
-
+  
   const googleLogin = async () => {
     try {
       setLoading(true);
@@ -90,24 +104,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (payload: any) => {
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        }
+      );
 
       const data = await response.json();
 
       if (data.success) {
         router.push("/login");
       } else {
-        throw new Error(data.message);
+        // Handle specific error messages from backend
+        if (data.message === "User already exist!!") {
+          throw new Error(
+            "An account with this email already exists. Please try logging in instead."
+          );
+        }
+        throw new Error(
+          data.message || "Registration failed. Please try again."
+        );
       }
     } catch (error) {
       console.error("Registration failed:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
