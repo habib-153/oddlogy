@@ -10,6 +10,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 
 interface ProductCardProps {
+  id: string;
   imageUrl: string;
   title: string;
   price: string;
@@ -19,6 +20,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({
+  id,
   imageUrl,
   title,
   price,
@@ -80,7 +82,7 @@ export function ProductCard({
 
         <h3 className="font-bold text-lg truncate">
           <Link
-            href={`/courses/${typeof window !== "undefined" ? window.location.pathname.split("/")[2] : ""}`}
+            href={`/courses/${id}`}
             className="text-gray-900 hover:text-[#e52d53] transition-colors"
           >
             {title}

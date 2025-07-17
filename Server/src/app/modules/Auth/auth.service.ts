@@ -16,6 +16,8 @@ const registerUser = async (payload: TRegisterUser) => {
 
   // Set default role
   payload.role = USER_ROLE.USER;
+  payload.profilePhoto =
+    'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
 
   // Create new user with hashed password
   const newUser = await User.create({
@@ -49,6 +51,7 @@ const loginUser = async (payload: TLoginUser) => {
     name: user.name,
     email: user.email,
     role: user.role,
+    profilePhoto: user.profilePhoto,
   };
 
   const accessToken = createToken(

@@ -32,6 +32,7 @@ const updateUserIntoDB = (payload, id) => __awaiter(void 0, void 0, void 0, func
     const result = yield user_model_1.User.findByIdAndUpdate(id, payload, {
         new: true,
     });
+    console.log('result', result);
     return result;
 });
 const deleteUserFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {

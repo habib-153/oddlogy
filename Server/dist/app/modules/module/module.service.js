@@ -17,8 +17,27 @@ const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const module_model_1 = require("./module.model");
 const mongoose_1 = require("mongoose");
+const course_model_1 = require("../course/course.model");
+//  need to modify when create push on course object
 const createModuleIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const course = yield course_model_1.Course.findById(payload.course);
+    if (!course) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Course not found');
+    }
+    // Check if the module number is unique within the course
+    const existingModule = yield module_model_1.Module.findOne({
+        course: payload.course,
+        module_number: payload.module_number,
+    });
+    if (existingModule) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Module number must be unique within the course');
+    }
     const result = yield module_model_1.Module.create(payload);
+    if (!result) {
+        throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Module creation failed');
+    }
+    course.modules.push(result._id);
+    yield course.save();
     return result;
 });
 const getAllModulesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {

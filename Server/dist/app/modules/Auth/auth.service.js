@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
@@ -26,12 +25,10 @@ const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* ()
     if (user) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'User already exist!!!');
     }
-    // Hash the password
-    const hashedPassword = yield bcryptjs_1.default.hash(payload.password, Number(config_1.default.bcrypt_salt_rounds));
     // Set default role
     payload.role = user_constant_1.USER_ROLE.USER;
     // Create new user with hashed password
-    const newUser = yield user_model_1.User.create(Object.assign(Object.assign({}, payload), { password: hashedPassword }));
+    const newUser = yield user_model_1.User.create(Object.assign({}, payload));
     return newUser;
 });
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
