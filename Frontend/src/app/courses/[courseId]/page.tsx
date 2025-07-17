@@ -10,7 +10,6 @@ interface CourseDetailPageProps {
 export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
     const course: TCourse | null = await getCourseById(params.courseId);
     if (!course) return notFound();
-    console.log(course)
 
     return (
         <div className="container mx-auto py-8">
