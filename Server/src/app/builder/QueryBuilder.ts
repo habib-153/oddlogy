@@ -16,7 +16,7 @@ export class QueryBuilder<T> {
       searchTerm = this.query.searchTerm as string;
     }
     // {title: {$regex: searchTerm}}
-    // {genre: {$regex: searchTerm}}
+    // {Category: {$regex: searchTerm}}
     this.modelQuery = this.modelQuery.find({
       $or: searchableFields.map(
         (field) =>

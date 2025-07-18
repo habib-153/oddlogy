@@ -42,11 +42,10 @@ const AuthContainer = () => {
     return (
         <div className="auth-page">
             <section id="magnetMultiForm" className="magnet login magnetMultiForm">
-                <div className={`container ${isSignUpMode ? 'sign-up-mode' : ''}`}>
-                    <div className="forms-container">
+                <div className={`container ${isSignUpMode ? 'sign-up-mode' : ''}`} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '80vh' }}>
+                    <div className="forms-container" style={{ marginTop: '60px' }}>
                         <div className="signin-signup">
-                            <LoginForm />
-                            <RegisterForm />
+                            {!isSignUpMode ? <LoginForm /> : <RegisterForm />}
                         </div>
                     </div>
 

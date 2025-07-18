@@ -1,119 +1,73 @@
+
 "use client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useForm } from "react-hook-form";
 import { UserData } from "@/types/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 
 const RegisterForm = () => {
   const { register: registerUserFunc, loading } = useAuth();
-  const { toast } = useToast();
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<UserData>();
 
   const onSubmit = async (data: UserData) => {
     try {
       await registerUserFunc(data);
-      toast({
-        title: "Success!",
-        description:
-          "Your account has been created successfully. You can now login.",
-        variant: "default",
-      });
-      reset(); // Clear form after successful registration
-    } catch (error: any) {
-      toast({
-        title: "Registration Failed",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+    } catch (error) {
+      console.error("Registration failed:", error);
     }
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Sign Up</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Enter your full name"
-              {...register("name", { required: "Name is required" })}
-              className={errors.name ? "border-red-500" : ""}
-            />
-            {errors.name && (
-              <span className="text-sm text-red-500">
-                {errors.name.message}
-              </span>
-            )}
-          </div>
+    <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
+      <h2 className="title">Sign Up</h2>
+      <div className="input-field">
+        <i className="fas fa-user"></i>
+        <input
+          type="text"
+          placeholder="username"
+          {...register("name", { required: "Name is required" })}
+        />
+      </div>
+      {errors.name && (
+        <span className="error-message">{errors.name.message}</span>
+      )}
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: "Please enter a valid email address",
-                },
-              })}
-              className={errors.email ? "border-red-500" : ""}
-            />
-            {errors.email && (
-              <span className="text-sm text-red-500">
-                {errors.email.message}
-              </span>
-            )}
-          </div>
+      <div className="input-field">
+        <i className="fas fa-envelope"></i>
+        <input
+          type="email"
+          placeholder="email"
+          {...register("email", { required: "Email is required" })}
+        />
+      </div>
+      {errors.email && (
+        <span className="error-message">{errors.email.message}</span>
+      )}
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
-                },
-              })}
-              className={errors.password ? "border-red-500" : ""}
-            />
-            {errors.password && (
-              <span className="text-sm text-red-500">
-                {errors.password.message}
-              </span>
-            )}
-          </div>
+      <div className="input-field">
+        <i className="fas fa-lock"></i>
+        <input
+          type="password"
+          placeholder="password"
+          {...register("password", { required: "Password is required" })}
+        />
+      </div>
+      {errors.password && (
+        <span className="error-message">{errors.password.message}</span>
+      )}
 
-          <Button
-            type="submit"
-            className="w-full bg-[#D2DD27] text-black hover:bg-[#A8B823]"
-            disabled={loading}
-          >
-            {loading ? "Creating Account..." : "Sign Up"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <input type="submit" className="btn" value={loading ? "Loading..." : "Sign up"} disabled={loading} />
+      <p className="social-text">Or sign in with</p>
+      <div className="social-media">
+        <a href="#" className="social-icon"><i className="fab fa-facebook"></i></a>
+        <a href="#" className="social-icon"><i className="fab fa-twitter"></i></a>
+        <a href="#" className="social-icon"><i className="fab fa-linkedin-in"></i></a>
+        <a href="#" className="social-icon"><i className="fab fa-google"></i></a>
+      </div>
+    </form>
   );
 };
 
