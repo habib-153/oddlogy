@@ -24,3 +24,8 @@ export async function updateCourse(id: string, data: TCourse): Promise<TCourse> 
   const res = await axiosInstance.patch(`/courses/${id}`, data);
   return res.data.data;
 }
+
+export async function deleteCourse(id: string): Promise<void> {
+  const res = await axiosInstance.delete(`/courses/${id}`);
+  return res.data.data;
+}

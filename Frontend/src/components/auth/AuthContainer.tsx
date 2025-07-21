@@ -16,6 +16,13 @@ const AuthContainer = () => {
         setIsSignUpMode(pathname === '/register');
     }, [pathname]);
 
+    // useEffect(() => {
+    //     document.body.classList.add('auth-body');
+    //     return () => {
+    //         document.body.classList.remove('auth-body');
+    //     };
+    // }, []);
+
     const toggleToSignUp = () => {
         setIsSignUpMode(true);
         // Wait for the main transition to complete before navigating

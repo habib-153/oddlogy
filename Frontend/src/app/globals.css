@@ -8,6 +8,21 @@ body {
   font-family: "Oswald", sans-serif;
 }
 
+.auth-page {
+  min-height: 100vh;
+  background: #4481eb;
+}
+
+.auth-page body {
+  background: #4481eb;
+}
+
+/* Or use a more specific selector */
+.magnetMultiForm {
+  background: #4481eb;
+  min-height: 100vh;
+}
+
 .tikluTestimonial {
   padding: 5rem 0rem 5rem 0rem;
 }
