@@ -4,7 +4,7 @@ import { User } from "../User/user.model"
 import { TUser } from "../User/user.interface"
 
 const getAllInstructorsFromDB = async () => {
-    const instructors = await User.find({ role: 'instructor', isDeleted: false }).select('-password -__v')
+    const instructors = await User.find({ role: 'INSTRUCTOR', isDeleted: false }).select('-password -__v')
 
     return instructors
 }

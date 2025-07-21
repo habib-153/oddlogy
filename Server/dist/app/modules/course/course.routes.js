@@ -9,7 +9,9 @@ const course_controller_1 = require("./course.controller");
 const auth_1 = __importDefault(require("../../middlewares/auth"));
 const user_constant_1 = require("../User/user.constant");
 const router = express_1.default.Router();
-router.post('/', (0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.INSTRUCTOR), course_controller_1.CourseControllers.createCourse);
+router.post('/', 
+// auth(USER_ROLE.ADMIN, USER_ROLE.INSTRUCTOR),
+course_controller_1.CourseControllers.createCourse);
 router.get('/', course_controller_1.CourseControllers.getAllCourses);
 router.get('/home', course_controller_1.CourseControllers.getAllCoursesForHome);
 router.get('/:id', course_controller_1.CourseControllers.getCourseById);

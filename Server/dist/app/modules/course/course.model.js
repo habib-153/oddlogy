@@ -57,6 +57,11 @@ const courseSchema = new mongoose_1.Schema({
         enum: ['free', 'paid', 'subscription'],
         required: true,
     },
+    courseCategory: {
+        type: String,
+        enum: ['HSC', 'Admission', 'Skill Development', 'Others'],
+        required: true,
+    },
     courseStatus: {
         type: String,
         enum: ['in-progress', 'completed', 'not-started'],

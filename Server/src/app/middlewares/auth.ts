@@ -10,12 +10,24 @@ import { User } from '../modules/User/user.model';
 
 const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const authorizationHeader = req.headers.authorization;
 
     // checking if the token is missing
+    if (!authorizationHeader) {
+      console.log(`Authorization Header: ${authorizationHeader}`);
+      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+    }
+
+    // Extract token from "Bearer <token>" format
+    const token = authorizationHeader.startsWith('Bearer ')
+      ? authorizationHeader.substring(7)
+      : authorizationHeader;
+
     if (!token) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
     }
+
+    console.log('Token received:', token.substring(0, 20) + '...');
 
     const decoded = verifyToken(
       token,
@@ -41,7 +53,7 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
     }
 
-    if (requiredRoles && !requiredRoles.includes(role)) {
+    if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized');
     }
 

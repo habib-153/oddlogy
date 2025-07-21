@@ -31,7 +31,7 @@ const createFeatureImage = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
-        message: "Image Created Successfully",
+        message: "Banner Created Successfully",
         data: result,
     });
 }));

@@ -12,6 +12,7 @@ export const createToken = (
     email: string;
     mobileNumber?: string;
     role: keyof typeof USER_ROLE;
+    profilePhoto: string | undefined;
   },
   secret: string,
   expiresIn: string

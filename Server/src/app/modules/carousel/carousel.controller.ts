@@ -20,7 +20,7 @@ const createFeatureImage = catchAsync(async (req, res) => {
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
-        message: "Image Created Successfully",
+        message: "Banner Created Successfully",
         data: result,
     });
 })

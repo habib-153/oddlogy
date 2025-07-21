@@ -138,7 +138,7 @@ export default function Header() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="hover:bg-gray-300 hover:cursor-pointer"
-                    onClick={() => router.push("/dashboard")}
+                    onClick={() => router.push(`/${user?.role?.toLowerCase() || "user"}`)}
                   >
                     <User className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>

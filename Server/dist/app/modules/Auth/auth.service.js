@@ -27,6 +27,8 @@ const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* ()
     }
     // Set default role
     payload.role = user_constant_1.USER_ROLE.USER;
+    payload.profilePhoto =
+        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
     // Create new user with hashed password
     const newUser = yield user_model_1.User.create(Object.assign({}, payload));
     return newUser;
@@ -48,6 +50,7 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         name: user.name,
         email: user.email,
         role: user.role,
+        profilePhoto: user.profilePhoto,
     };
     const accessToken = (0, verifyJWT_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expires_in);
     return {

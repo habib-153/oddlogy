@@ -17,7 +17,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const user_model_1 = require("../User/user.model");
 const getAllInstructorsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const instructors = yield user_model_1.User.find({ role: 'instructor', isDeleted: false }).select('-password -__v');
+    const instructors = yield user_model_1.User.find({ role: 'INSTRUCTOR', isDeleted: false }).select('-password -__v');
     return instructors;
 });
 const getInstructorByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {

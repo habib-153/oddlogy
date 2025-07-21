@@ -26,7 +26,7 @@ const moduleRoutes = [
         route: profile_route_1.ProfileRoutes,
     },
     {
-        path: 'feature-image',
+        path: '/feature-image',
         route: carousel_route_1.CarouselRoutes,
     },
     {

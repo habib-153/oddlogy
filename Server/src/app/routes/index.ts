@@ -23,7 +23,7 @@ const moduleRoutes = [
     route: ProfileRoutes,
   },
   {
-    path: 'feature-image',
+    path: '/feature-image',
     route: CarouselRoutes,
   },
   {
