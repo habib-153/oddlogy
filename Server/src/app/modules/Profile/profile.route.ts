@@ -15,7 +15,7 @@ router.get(
 
 router.patch(
     '/',
-    auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+    auth(USER_ROLE.ADMIN, USER_ROLE.USER, USER_ROLE.INSTRUCTOR),
     multerUpload.single('profilePhoto'),
     parseBody,
     ProfileController.updateMyProfile
