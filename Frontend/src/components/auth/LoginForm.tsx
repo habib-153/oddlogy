@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Mail, Lock } from "lucide-react";
 
 export type FormValues = {
   email: string;
@@ -57,58 +58,99 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Login</CardTitle>
+    <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+      <CardHeader className="text-center pb-2 px-4 md:px-6">
+        <CardTitle className="text-xl md:text-2xl font-bold text-gray-900">
+          Welcome Back
+        </CardTitle>
+        <p className="text-sm md:text-base text-gray-600">
+          Sign in to your account
+        </p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4 px-4 md:px-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              {...register("email", { required: "Email is required" })}
-              className={errors.email ? "border-red-500" : ""}
-            />
+            <Label
+              htmlFor="email"
+              className="text-gray-700 font-medium text-sm md:text-base"
+            >
+              Email Address
+            </Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                className={`pl-10 border-gray-200 focus:border-brand-primary/70 focus:ring-brand-primary/70 text-sm md:text-base ${
+                  errors.email ? "border-red-500" : ""
+                }`}
+                {...register("email", { required: "Email is required" })}
+              />
+            </div>
             {errors.email && (
-              <span className="text-sm text-red-500">
+              <span className="text-xs md:text-sm text-red-500">
                 {errors.email.message}
               </span>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              {...register("password", { required: "Password is required" })}
-              className={errors.password ? "border-red-500" : ""}
-            />
+            <Label
+              htmlFor="password"
+              className="text-gray-700 font-medium text-sm md:text-base"
+            >
+              Password
+            </Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                className={`pl-10 border-gray-200 focus:border-brand-primary/70 focus:ring-brand-primary/70 text-sm md:text-base ${
+                  errors.password ? "border-red-500" : ""
+                }`}
+                {...register("password", { required: "Password is required" })}
+              />
+            </div>
             {errors.password && (
-              <span className="text-sm text-red-500">
+              <span className="text-xs md:text-sm text-red-500">
                 {errors.password.message}
               </span>
             )}
           </div>
 
+          <div className="flex items-center justify-between text-xs md:text-sm">
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300 text-brand-primary/70 focus:ring-brand-primary/70"
+              />
+              <span className="text-gray-600">Remember me</span>
+            </label>
+            <a
+              href="#"
+              className="text-gray-600 hover:text-black font-medium"
+            >
+              Forgot password?
+            </a>
+          </div>
+
           <Button
             type="submit"
-            className="w-full bg-[#D2DD27] text-black hover:bg-[#A8B823]"
+            className="w-full bg-[#D2DD27] hover:bg-[#A8B823] text-black font-medium py-2.5 transition-all duration-200 transform hover:scale-[1.02] text-sm md:text-base"
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Signing in..." : "Sign In"}
           </Button>
 
-          <div className="relative">
+          <div className="relative my-4 md:my-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
+              <span className="bg-white px-2 text-gray-500">
                 Or continue with
               </span>
             </div>
@@ -117,7 +159,7 @@ const LoginForm = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full border-gray-200 hover:bg-gray-50 transition-all duration-200 text-sm md:text-base"
             onClick={handleGoogleLogin}
             disabled={loading}
           >
@@ -139,7 +181,7 @@ const LoginForm = () => {
                 fill="#EA4335"
               />
             </svg>
-            Google
+            Sign in with Google
           </Button>
         </form>
       </CardContent>

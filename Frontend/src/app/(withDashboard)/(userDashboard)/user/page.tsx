@@ -1,13 +1,17 @@
+"use client";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { authOptions } from "@/utils/authOptions";
-import { getServerSession } from "next-auth";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 
-const DashboardPage = async () => {
-  const session = await getServerSession(authOptions);
-  console.log(session);
+const DashboardPage = () => {
+  const { data: session, status } = useSession();
+    const { user: authUser, logout } = useAuth();
+  
+    const user = session?.user || authUser;
+    console.log("user", user);
   return (
-    <DashboardLayout role="admin">
+    <DashboardLayout role="user">
       {session?.user && (
         <>
           <h1 className="text-4xl text-center mt-10">
