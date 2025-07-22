@@ -7,7 +7,7 @@ const DashboardPage = async () => {
   const session = await getServerSession(authOptions);
   console.log(session);
   return (
-    <DashboardLayout role="user">
+    <DashboardLayout role="admin">
       {session?.user && (
         <>
           <h1 className="text-4xl text-center mt-10">
