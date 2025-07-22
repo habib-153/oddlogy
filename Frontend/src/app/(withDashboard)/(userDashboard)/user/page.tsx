@@ -1,3 +1,4 @@
+import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
@@ -6,7 +7,7 @@ const DashboardPage = async () => {
   const session = await getServerSession(authOptions);
   console.log(session);
   return (
-    <div>
+    <DashboardLayout role="user">
       {session?.user && (
         <>
           <h1 className="text-4xl text-center mt-10">
@@ -27,7 +28,7 @@ const DashboardPage = async () => {
           />
         </>
       )}
-    </div>
+    </DashboardLayout>
   );
 };
 
