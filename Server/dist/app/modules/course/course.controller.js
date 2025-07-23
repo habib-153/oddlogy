@@ -18,7 +18,20 @@ const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const course_service_1 = require("./course.service");
 const createCourse = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield course_service_1.CourseServices.createCourseIntoDB(req.body);
+    const files = req.files;
+    const courseData = req.body;
+    // Handle uploaded images
+    if (files) {
+        if (files.banner && files.banner[0]) {
+            courseData.media = courseData.media || {};
+            courseData.media.banner = files.banner[0].path;
+        }
+        if (files.thumbnail && files.thumbnail[0]) {
+            courseData.media = courseData.media || {};
+            courseData.media.thumbnail = files.thumbnail[0].path;
+        }
+    }
+    const result = yield course_service_1.CourseServices.createCourseIntoDB(courseData);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.CREATED,
         success: true,
@@ -56,7 +69,20 @@ const getCourseById = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
 }));
 const updateCourse = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const result = yield course_service_1.CourseServices.updateCourseByIdIntoDB(id, req.body);
+    const files = req.files;
+    const updateData = req.body;
+    // Handle uploaded images for updates
+    if (files) {
+        if (files.banner && files.banner[0]) {
+            updateData.media = updateData.media || {};
+            updateData.media.banner = files.banner[0].path;
+        }
+        if (files.thumbnail && files.thumbnail[0]) {
+            updateData.media = updateData.media || {};
+            updateData.media.thumbnail = files.thumbnail[0].path;
+        }
+    }
+    const result = yield course_service_1.CourseServices.updateCourseByIdIntoDB(id, updateData);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

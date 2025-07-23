@@ -15,14 +15,71 @@ export async function getCourseById(id: string): Promise<TCourse | null> {
   return res.data.data || null;
 }
 
-export async function addCourse(data: TCourse): Promise<TCourse> {
-  const res = await axiosInstance.post('/courses', data);
-  return res.data.data;
+export async function addCourseWithFiles(
+  courseData: TCourse & { banner?: File; thumbnail?: File }
+): Promise<TCourse> {
+  const formData = new FormData();
+
+  // Append all course data
+  Object.entries(courseData).forEach(([key, value]) => {
+    if (key === "banner" || key === "thumbnail") {
+      if (value instanceof File) {
+        formData.append(key, value);
+      }
+    } else if (key === "media") {
+      // Handle media object (for intro_video URL)
+      if (value && typeof value === "object") {
+        Object.entries(value).forEach(([mediaKey, mediaValue]) => {
+          if (mediaKey !== "banner" && mediaKey !== "thumbnail" && mediaValue) {
+            formData.append(`media.${mediaKey}`, mediaValue as string);
+          }
+        });
+      }
+    } else if (value !== undefined && value !== null) {
+      formData.append(key, value.toString());
+    }
+  });
+
+  const response = await axiosInstance.post("/courses", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data.data;
 }
 
-export async function updateCourse(id: string, data: TCourse): Promise<TCourse> {
-  const res = await axiosInstance.patch(`/courses/${id}`, data);
-  return res.data.data;
+export async function updateCourseWithFiles(
+  id: string,
+  courseData: Partial<TCourse> & { banner?: File; thumbnail?: File }
+): Promise<TCourse> {
+  const formData = new FormData();
+
+  // Append all course data
+  Object.entries(courseData).forEach(([key, value]) => {
+    if (key === "banner" || key === "thumbnail") {
+      if (value instanceof File) {
+        formData.append(key, value);
+      }
+    } else if (key === "media") {
+      // Handle media object (for intro_video URL)
+      if (value && typeof value === "object") {
+        Object.entries(value).forEach(([mediaKey, mediaValue]) => {
+          if (mediaKey !== "banner" && mediaKey !== "thumbnail" && mediaValue) {
+            formData.append(`media.${mediaKey}`, mediaValue as string);
+          }
+        });
+      }
+    } else if (value !== undefined && value !== null) {
+      formData.append(key, value.toString());
+    }
+  });
+
+  const response = await axiosInstance.patch(`/courses/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data.data;
 }
 
 export async function deleteCourse(id: string): Promise<void> {

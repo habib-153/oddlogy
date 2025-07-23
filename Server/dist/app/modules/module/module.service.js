@@ -37,6 +37,7 @@ const createModuleIntoDB = (payload) => __awaiter(void 0, void 0, void 0, functi
         throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Module creation failed');
     }
     course.modules.push(result._id);
+    course.moduleCount = (course.moduleCount || 0) + 1;
     yield course.save();
     return result;
 });
