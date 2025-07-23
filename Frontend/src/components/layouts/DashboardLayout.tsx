@@ -63,11 +63,11 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
-      <DynamicSidebar
+      {/* <DynamicSidebar
         config={sidebarConfig}
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-      />
+      /> */}
 
       {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">

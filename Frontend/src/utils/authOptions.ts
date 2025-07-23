@@ -12,7 +12,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, account, profile }) {
       if (account) {
         token.id = profile?.sub || token.id;
-        token.role = "USER"; // Set default role for Google users
+        token.role = "user"; // Set default role for Google users as lowercase
       }
       return token;
     },

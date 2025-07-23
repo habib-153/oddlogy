@@ -9,7 +9,7 @@ import { getCurrentUser } from "@/utils/cookies";
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: string[];
-  adminOnly?: boolean; 
+  adminOnly?: boolean;
 }
 
 export default function ProtectedRoute({
@@ -47,7 +47,7 @@ export default function ProtectedRoute({
           // Backward compatibility
           roles = ["admin"];
         } else if (allowedRoles.length > 0) {
-          // Use provided allowed roles
+          // Use provided allowed roles (convert to lowercase for comparison)
           roles = allowedRoles.map((role) => role.toLowerCase());
         } else {
           // If no roles specified, allow any authenticated user
@@ -56,9 +56,17 @@ export default function ProtectedRoute({
           return;
         }
 
-        // Check if user's role is in allowed roles
-        const userRole = currentUser.role?.toLowerCase();
-        const hasAccess = roles.includes(userRole as string);
+        // Normalize user role to lowercase for comparison
+        const userRole = (currentUser.role || "user").toLowerCase();
+
+        // Debug information
+        console.log("Protected route check:", {
+          userRole,
+          allowedRoles: roles,
+          hasAccess: roles.includes(userRole)
+        });
+
+        const hasAccess = roles.includes(userRole);
 
         if (!hasAccess) {
           // Redirect based on user's actual role
