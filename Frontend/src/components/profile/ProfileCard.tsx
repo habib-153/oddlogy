@@ -29,7 +29,7 @@ export function ProfileCard({ userData, userRole }: ProfileCardProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState<ProfileUpdateData>({
         name: userData.name,
-        image: userData.image || "",
+        profilePhoto: userData.profilePhoto || "",
         bio: userData.bio || "",
         phone: userData.phone || "",
         address: userData.address || "",
@@ -162,13 +162,13 @@ export function ProfileCard({ userData, userRole }: ProfileCardProps) {
                                         </div>
 
                                         <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label htmlFor="image" className="text-right">
+                                            <Label htmlFor="profilePhoto" className="text-right">
                                                 Image URL
                                             </Label>
                                             <Input
-                                                id="image"
-                                                name="image"
-                                                value={formData.image}
+                                                id="profilePhoto"
+                                                name="profilePhoto"
+                                                value={formData.profilePhoto}
                                                 onChange={handleChange}
                                                 className="col-span-3"
                                             />
