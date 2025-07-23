@@ -19,14 +19,9 @@ export default function ClientProfilePage({ isAdmin = false }: ClientProfilePage
     const currentUser = session?.user || authUser;
 
     // Try to get the user ID from various sources
-    const userId = currentUser?.id || currentUser?._id;
+    const userId = currentUser?.id;
 
-    console.log("Auth sources:", {
-        session: session?.user ? true : false,
-        authUser: authUser ? true : false
-    });
-    console.log("Current user:", currentUser);
-    console.log("Using user ID for query:", userId);
+
 
     const { data: userData, isLoading, error } = useUser(userId || "");
     const [role, setRole] = useState<string>(isAdmin ? "admin" : "user");
@@ -35,13 +30,10 @@ export default function ClientProfilePage({ isAdmin = false }: ClientProfilePage
         // Check if user role is available from session or auth context
         if (session?.user?.role) {
             setRole(session.user.role.toLowerCase());
-            console.log("Role from session:", session.user.role);
         } else if (authUser?.role) {
             setRole(authUser.role.toLowerCase());
-            console.log("Role from authUser:", authUser.role);
         } else if (userData?.role) {
             setRole(userData.role.toLowerCase());
-            console.log("Role from userData:", userData.role);
         }
     }, [session, authUser, userData, isAdmin]);
 
