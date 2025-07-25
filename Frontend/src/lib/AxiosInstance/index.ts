@@ -1,8 +1,8 @@
 "use client";
 import envConfig from "@/config/envConfig";
-import { getAuthCookie } from "@/utils/cookies";
 import axios from "axios";
 import { getSession } from "next-auth/react";
+import { getAuthCookie } from "@/utils/cookies";
 
 const axiosInstance = axios.create({
   baseURL: envConfig.baseApi,
