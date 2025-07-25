@@ -1,57 +1,51 @@
-"use client";
 import envConfig from "@/config/envConfig";
 import axios from "axios";
-import { getSession } from "next-auth/react";
 import { getAuthCookie } from "@/utils/cookies";
 
 const axiosInstance = axios.create({
-  baseURL: envConfig.baseApi,
+  baseURL: envConfig.baseApi || "http://localhost:5000/api/v1",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// axiosInstance.interceptors.request.use(
-//   async function (config) {
-//     const cookieStore = await cookies();
-//     const accessToken = cookieStore.get("auth-token")?.value;
-//     console.log("Token from cookies:", accessToken);
-
-//     if (accessToken) {
-//       config.headers.Authorization = accessToken;
-//     }
-
-//     return config;
-//   },
-//   function (error) {
-//     return Promise.reject(error);
-//   }
-// );
-
-// export default axiosInstance;
-
+// Add a request interceptor to attach auth token
 axiosInstance.interceptors.request.use(
-  async function (config) {
-    let token = null;
-
-    // const cookieStore = await cookies();
-    token = await getAuthCookie();
-    console.log("Token from cookies:", token);
-
-    if (!token) {
-      try {
-        const session = await getSession();
-        if (session?.accessToken) {
-          token = session.accessToken as string;
-        }
-      } catch (error) {
-        console.log("No NextAuth session found");
+  async (config) => {
+    try {
+      // Get the auth token from cookies
+      const authToken = await getAuthCookie();
+      
+      if (authToken) {
+        // Format the authorization header properly with Bearer prefix
+        config.headers["Authorization"] = `Bearer ${authToken}`;
+        console.log("Authorization header set:", `Bearer ${authToken.substring(0, 20)}...`);
+      } else {
+        console.log("No auth token found in cookies");
       }
+      
+      return config;
+    } catch (error) {
+      console.error("Error in axios interceptor:", error);
+      return config;
     }
-    if (token) {
-      config.headers.authorization = token;
-    }
-
-    return config;
   },
-  function (error) {
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor for better error handling
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("API Error:", {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data,
+      headers: error.config?.headers
+    });
     return Promise.reject(error);
   }
 );

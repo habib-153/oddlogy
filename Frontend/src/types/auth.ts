@@ -9,9 +9,11 @@ export type UserData = {
   name: string;
   email: string;
   password: string;
+  image?: string;
   profilePhoto?: string;
   bio?: string;
   phone?: string;
+  mobileNumber?: string;
   address?: string;
   role?: string;
   createdAt?: string;
