@@ -18,6 +18,7 @@ export async function middleware(request: NextRequest) {
     console.error("Error getting current user from cookie:", error);
   }
 
+
   // Combine both authentication methods
   const user = nextAuthToken
     ? {
