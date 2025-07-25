@@ -220,16 +220,21 @@ export default function UpdateCourseModal({
     courseStatus: course.courseStatus,
     price: course.price,
     salePrice: course.salePrice,
-    "media.intro_video": course.media?.intro_video || "",
+    intro_video: course.media?.intro_video || "",
   };
 
   const onSubmit = (data: any) => {
     // Extract files from form data
-    const { banner, thumbnail, ...courseData } = data;
+    const { banner, thumbnail, intro_video, ...courseData } = data;
 
     // Prepare submission data
     const submissionData = {
       ...courseData,
+      ...(intro_video && {
+        media: {
+          intro_video: intro_video,
+        },
+      }),
       ...(banner && { banner }),
       ...(thumbnail && { thumbnail }),
     };
@@ -373,7 +378,7 @@ export default function UpdateCourseModal({
 
               <div className="md:col-span-2">
                 <ODInput
-                  name="media.intro_video"
+                  name="intro_video"
                   label="Intro Video URL (Optional)"
                   placeholder="https://youtube.com/watch?v=..."
                 />

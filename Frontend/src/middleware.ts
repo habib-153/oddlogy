@@ -1,7 +1,3 @@
-// export { default } from "next-auth/middleware";
-
-// export const config = { matcher: ["/dashboard"] };
-
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { getCurrentUser } from "./utils/cookies";
@@ -13,6 +9,7 @@ export async function middleware(request: NextRequest) {
 
   // Try to get user from both sources
   const nextAuthToken = await getToken({ req: request });
+  console.log("NextAuth Token:", nextAuthToken);
   const jwtUser = await getCurrentUser();
 
   // Combine both authentication methods

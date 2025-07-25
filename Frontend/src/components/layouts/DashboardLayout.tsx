@@ -38,7 +38,7 @@ export default function DashboardLayout({
   // Get user from either source
   const user = session?.user || authUser;
   const userRole = role || user?.role || "user";
-
+console.log(user)
   const handleLogout = async () => {
     if (session) {
       await signOut({ redirect: false });
@@ -104,7 +104,13 @@ export default function DashboardLayout({
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.image || ""} alt={user?.name || ""} />
+                  <AvatarImage
+                    src={
+                      (user as any)?.profilePhoto || user?.image ||
+                      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                    }
+                    alt={user?.name || ""}
+                  />
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     {getUserInitials(user?.name as string)}
                   </AvatarFallback>
@@ -119,7 +125,7 @@ export default function DashboardLayout({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
+              <DropdownMenuItem className=""
                 onClick={() =>
                   router.push(`/${userRole.toLowerCase()}/profile`)
                 }

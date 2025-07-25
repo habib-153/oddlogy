@@ -7,4 +7,6 @@ export type UserData = {
   name: string;
   email: string;
   password: string;
+  profilePhoto?: string;
+  role?: string;
 };

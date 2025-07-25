@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { CarouselServices } from "./carousel.service";
+import { TImageFile } from "../../interfaces/image.interface";
 
 const getAllImages = catchAsync(async (req, res) => {
     const images = await CarouselServices.getFeatureImagesFromDB()
@@ -15,15 +16,32 @@ const getAllImages = catchAsync(async (req, res) => {
 })
 
 const createFeatureImage = catchAsync(async (req, res) => {
-    const result = await CarouselServices.createFeatureImagesIntoDB(req.body)
+  const file = req.file as TImageFile;
+  const { name } = req.body;
 
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "Banner Created Successfully",
-        data: result,
+  if (!file) {
+    return sendResponse(res, {
+      statusCode: httpStatus.BAD_REQUEST,
+      success: false,
+      message: 'Image file is required',
+        data: null,
     });
-})
+  }
+
+  const imageData = {
+    name,
+    img_url: file.path, 
+  };
+
+  const result = await CarouselServices.createFeatureImagesIntoDB(imageData);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: 'Feature image created successfully',
+    data: result,
+  });
+});
 
 const deleteFeatureImage = catchAsync(async (req, res) => {
     const { id } = req.params

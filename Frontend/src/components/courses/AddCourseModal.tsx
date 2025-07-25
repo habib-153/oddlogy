@@ -316,7 +316,7 @@ export default function AddCourseModal({ onSuccess }: AddCourseModalProps) {
 
               <div className="md:col-span-2">
                 <ODInput
-                  name="media.intro_video"
+                  name="intro_video"
                   label="Intro Video URL (Optional)"
                   placeholder="https://youtube.com/watch?v=..."
                 />
