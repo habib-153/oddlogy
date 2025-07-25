@@ -5,23 +5,23 @@ import { UserData } from "@/types/auth";
 import { getUserInfo, updateUserInfo } from "@/utils/user";
 
 
-export function useUser(email: string) {
+export function useUser(userId: string) {
   return useQuery<UserData | null, Error>({
-    queryKey: ["user", email],
-    queryFn: () => getUserInfo(email),
-    enabled: !!email,
+    queryKey: ["user", userId],
+    queryFn: () => getUserInfo(userId),
+    enabled: !!userId,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
   });
 }
 
 
-export function useUpdateUser(email: string) {
+export function useUpdateUser(userId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<UserData>) => updateUserInfo(email, data),
+    mutationFn: (data: Partial<UserData>) => updateUserInfo(userId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user", email] });
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
     },
   });
 }

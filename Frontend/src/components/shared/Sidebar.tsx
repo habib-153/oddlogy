@@ -88,6 +88,11 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
         icon: BarChart3,
       },
       {
+        title: "Profile",
+        href: "/admin/profile",
+        icon: User,
+      },
+      {
         title: "Settings",
         href: "/admin/settings",
         icon: Settings,
@@ -112,26 +117,26 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
         href: "/user/profile",
         icon: User,
       },
-      {
-        title: "Assignments",
-        href: "/user/assignments",
-        icon: FileText,
-      },
-      {
-        title: "Schedule",
-        href: "/user/schedule",
-        icon: Calendar,
-      },
-      {
-        title: "Messages",
-        href: "/user/messages",
-        icon: Mail,
-      },
-      {
-        title: "Settings",
-        href: "/user/settings",
-        icon: Settings,
-      },
+      // {
+      //   title: "Assignments",
+      //   href: "/user/assignments",
+      //   icon: FileText,
+      // },
+      // {
+      //   title: "Schedule",
+      //   href: "/user/schedule",
+      //   icon: Calendar,
+      // },
+      // {
+      //   title: "Messages",
+      //   href: "/user/messages",
+      //   icon: Mail,
+      // },
+      // {
+      //   title: "Settings",
+      //   href: "/user/settings",
+      //   icon: Settings,
+      // },
     ],
   },
   instructor: {
@@ -311,10 +316,15 @@ export function DynamicSidebar({
   );
 }
 
-// Helper function to get sidebar config by role
+
+// Helper function to get sidebar config by role (client only)
 export const getSidebarConfig = (role: string): SidebarConfig => {
   return sidebarConfigs[role.toLowerCase()] || sidebarConfigs.user;
 };
 
-// Export individual configs for direct use
-export { sidebarConfigs };
+// Client wrapper for DynamicSidebar to be used in server components
+import { FC } from "react";
+export const SidebarClient: FC<{ role: string; collapsed?: boolean; onToggle?: () => void }> = ({ role, collapsed, onToggle }) => {
+  "use client";
+  return <DynamicSidebar config={getSidebarConfig(role)} collapsed={collapsed} onToggle={onToggle} />;
+};

@@ -1,9 +1,17 @@
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { SidebarClient } from "@/components/shared/Sidebar";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <ProtectedRoute allowedRoles={["admin"]}>{children}</ProtectedRoute>;
+  return (
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <div className="flex min-h-screen">
+        <SidebarClient role="admin" />
+        <main className="flex-1 p-8">{children}</main>
+      </div>
+    </ProtectedRoute>
+  );
 }

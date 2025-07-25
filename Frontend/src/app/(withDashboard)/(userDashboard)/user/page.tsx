@@ -6,12 +6,12 @@ import Image from "next/image";
 
 const DashboardPage = () => {
   const { data: session, status } = useSession();
-    const { user: authUser, logout } = useAuth();
-  
-    const user = session?.user || authUser;
-    console.log("user", user);
+  const { user: authUser, logout } = useAuth();
+
+  const user = session?.user || authUser;
+  console.log("user", user);
   return (
-    <DashboardLayout role="user">
+    <>
       {session?.user && (
         <>
           <h1 className="text-4xl text-center mt-10">
@@ -32,7 +32,7 @@ const DashboardPage = () => {
           />
         </>
       )}
-    </DashboardLayout>
+    </>
   );
 };
 

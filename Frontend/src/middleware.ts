@@ -9,25 +9,36 @@ export async function middleware(request: NextRequest) {
 
   // Try to get user from both sources
   const nextAuthToken = await getToken({ req: request });
-  console.log("NextAuth Token:", nextAuthToken);
-  const jwtUser = await getCurrentUser();
+  
+  // Get user from JWT cookie
+  let jwtUser = null;
+  try {
+    jwtUser = await getCurrentUser();
+  } catch (error) {
+    console.error("Error getting current user from cookie:", error);
+  }
+
 
   // Combine both authentication methods
   const user = nextAuthToken
     ? {
         id: nextAuthToken.sub,
         email: nextAuthToken.email,
-        role: nextAuthToken.role || "USER",
+        role: (nextAuthToken.role as string || "user").toLowerCase(),
       }
-    : jwtUser;
+    : jwtUser
+      ? {
+          ...jwtUser,
+          role: (jwtUser.role || "user").toLowerCase()
+        }
+      : null;
 
-    console.log(user)
   // Allow public routes
   if (authRoutes.includes(pathname)) {
     if (user) {
       return NextResponse.redirect(
         new URL(
-          user.role === "ADMIN" ? "/admin" : "/user",
+          user.role === "admin" ? "/admin" : "/user",
           request.url
         )
       );
@@ -41,11 +52,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // Handle role-based access
-  if (pathname.startsWith("/admin") && user.role !== "ADMIN") {
+  if (pathname.startsWith("/admin") && user.role !== "admin") {
     return NextResponse.redirect(new URL("/user", request.url));
   }
 
-  if (pathname.startsWith("/user") && user.role !== "USER") {
+  if (pathname.startsWith("/user") && user.role !== "user") {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 
