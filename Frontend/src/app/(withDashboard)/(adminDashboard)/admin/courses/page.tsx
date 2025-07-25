@@ -37,6 +37,7 @@ import AddCourseModal from "@/components/courses/AddCourseModal";
 import UpdateCourseModal from "@/components/courses/UpdateCourseModal";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { TCourse } from "@/types/course";
+import Image from "next/image";
 
 export default function CourseManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -119,7 +120,9 @@ export default function CourseManagementPage() {
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Add New Course</DialogTitle>
+                <DialogTitle className="text-center">
+                  Add New Course
+                </DialogTitle>
               </DialogHeader>
               <AddCourseModal onSuccess={() => setShowAddModal(false)} />
             </DialogContent>
@@ -177,10 +180,12 @@ export default function CourseManagementPage() {
                             <div className="flex items-center gap-3">
                               <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
                                 {course.media?.thumbnail ? (
-                                  <img
+                                  <Image
                                     src={course.media.thumbnail}
                                     alt={course.title}
-                                    className="h-10 w-10 rounded-lg object-cover"
+                                    className="size-10 rounded-lg object-cover"
+                                    width={40}
+                                    height={40}
                                   />
                                 ) : (
                                   <span className="text-xs font-medium">
@@ -271,8 +276,8 @@ export default function CourseManagementPage() {
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
                                       Are you sure you want to delete &quot;
-                                      {course.title}&quot;? This action cannot be
-                                      undone.
+                                      {course.title}&quot;? This action cannot
+                                      be undone.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>

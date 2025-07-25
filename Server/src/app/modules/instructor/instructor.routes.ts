@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', InstructorControllers.getAllInstructor)
 router.get('/:id',
-    // auth('ADMIN', 'INSTRUCTOR'),
+    //  auth('ADMIN', 'INSTRUCTOR'),
     InstructorControllers.getInstructorById)
 router.patch('/:id', auth('ADMIN'), InstructorControllers.updateInstructorById)
 router.delete('/:id', auth('ADMIN'), InstructorControllers.deleteInstructorById)

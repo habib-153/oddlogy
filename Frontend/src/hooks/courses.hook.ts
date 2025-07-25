@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllCourses, getCourseById, addCourse, updateCourse, deleteCourse } from "@/utils/courses";
+import { getAllCourses, getCourseById,  deleteCourse, addCourseWithFiles, updateCourseWithFiles } from "@/utils/courses";
 import { TCourse } from "@/types/course";
 
 export function useCourses(category?: string) {
@@ -24,20 +24,26 @@ export function useCourse(courseId: string) {
 export function useAddCourse() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: addCourse,
+    mutationFn: addCourseWithFiles,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
   });
 }
 
-export function useUpdateCourse(courseId: string) {
+export function useUpdateCourse() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: TCourse) => updateCourse(courseId, data),
-    onSuccess: () => {
+    mutationFn: ({
+      id,
+      courseData,
+    }: {
+      id: string;
+      courseData: Partial<TCourse> & { banner?: File; thumbnail?: File };
+    }) => updateCourseWithFiles(id, courseData),
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
-      queryClient.invalidateQueries({ queryKey: ["course", courseId] });
+      queryClient.invalidateQueries({ queryKey: ["course", id] });
     },
   });
 }

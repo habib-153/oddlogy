@@ -58,6 +58,48 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         accessToken,
     };
 });
+const handleGoogleUser = (googleUserData) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, name, picture, sub } = googleUserData;
+    // Check if user already exists
+    let user = yield user_model_1.User.isUserExistsByEmail(email);
+    if (!user) {
+        // Create new user for Google login
+        user = yield user_model_1.User.create({
+            name,
+            email,
+            profilePhoto: picture ||
+                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+            role: user_constant_1.USER_ROLE.USER,
+            googleId: sub,
+            isGoogleUser: true,
+        });
+    }
+    else if (!user.googleId) {
+        // Update existing user with Google info
+        const updatedUser = yield user_model_1.User.findByIdAndUpdate(user._id, {
+            googleId: sub,
+            isGoogleUser: true,
+            profilePhoto: picture || user.profilePhoto,
+        }, { new: true });
+        if (!updatedUser) {
+            throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to update user');
+        }
+        user = updatedUser;
+    }
+    // Generate JWT token
+    const jwtPayload = {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profilePhoto: user.profilePhoto,
+    };
+    const accessToken = (0, verifyJWT_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expires_in);
+    return {
+        user,
+        accessToken,
+    };
+});
 // const changePassword = async (
 //   userData: JwtPayload,
 //   payload: { oldPassword: string; newPassword: string }
@@ -177,4 +219,5 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 exports.AuthServices = {
     registerUser,
     loginUser,
+    handleGoogleUser,
 };

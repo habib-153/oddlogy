@@ -14,6 +14,9 @@ router.post(
   AuthControllers.loginUser
 );
 
+router.post('/google', AuthControllers.handleGoogleAuth);
+
+
 // router.post(
 //   '/change-password',
 //   auth(USER_ROLE.USER, USER_ROLE.ADMIN),

@@ -69,7 +69,7 @@ export default function ODSelect({
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem className="hover:cursor-pointer hover:bg-gray-200" key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
           ))}

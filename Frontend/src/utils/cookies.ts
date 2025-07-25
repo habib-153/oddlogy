@@ -12,7 +12,7 @@ export const setAuthCookie = async (token: string) => {
 };
 
 export const getAuthCookie = async () => {
-  return (await cookies()).get("auth-token");
+  return (await cookies()).get("auth-token")?.value;
 };
 
 export const removeAuthCookie = async () => {
@@ -20,8 +20,7 @@ export const removeAuthCookie = async () => {
 };
 
 export const getCurrentUser = async () => {
-    const cookie = await getAuthCookie();
-    const accessToken = cookie?.value;
+    const accessToken = await getAuthCookie();
 
     let decodedToken = null;
 

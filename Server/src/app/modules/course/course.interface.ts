@@ -19,7 +19,7 @@ export type TCourse = {
   description: string;
   instructor: Types.ObjectId;
   students: Types.ObjectId[];
-  moduleCount: number;
+  moduleCount?: number;
   modules: Types.ObjectId[];
   courseType: TCourseType;
   courseCategory: TCourseCategory;

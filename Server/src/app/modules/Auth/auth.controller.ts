@@ -31,6 +31,19 @@ const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+const handleGoogleAuth = catchAsync(async (req, res) => {
+  const { googleUserData } = req.body;
+
+  const result = await AuthServices.handleGoogleUser(googleUserData);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Google authentication successful',
+    data: result,
+  });
+});
+
 // const registerUser = catchAsync(async (req, res) => {
 //   const result = await AuthServices.registerUser(req.body);
 //   const { refreshToken, accessToken } = result;
@@ -120,4 +133,5 @@ const loginUser = catchAsync(async (req, res) => {
 export const AuthControllers = {
   registerUser,
   loginUser,
+  handleGoogleAuth,
 };

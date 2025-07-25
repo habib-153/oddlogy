@@ -32,6 +32,7 @@ const createModuleIntoDB = async (payload: TModule) => {
   }
   
   course.modules.push(result._id);
+  course.moduleCount = (course.moduleCount || 0) + 1;
   await course.save();
   
   return result;

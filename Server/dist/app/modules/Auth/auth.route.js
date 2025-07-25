@@ -13,6 +13,7 @@ auth_controller_1.AuthControllers.registerUser);
 router.post('/login', 
 //validateRequest(AuthValidation.loginValidationSchema),
 auth_controller_1.AuthControllers.loginUser);
+router.post('/google', auth_controller_1.AuthControllers.handleGoogleAuth);
 // router.post(
 //   '/change-password',
 //   auth(USER_ROLE.USER, USER_ROLE.ADMIN),

@@ -7,7 +7,7 @@ import {
   removeAuthCookie,
   getCurrentUser,
 } from "@/utils/cookies";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 type User = {
   id: string;
@@ -32,17 +32,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleUser = async () => {
-    const user = await getCurrentUser();
+    const cookieUser = await getCurrentUser();
+    if (cookieUser) {
+      setUser(cookieUser as User);
+      setLoading(false);
+      return;
+    }
 
-    setUser(user as User);
+    if (session?.accessToken) {
+      try {
+        const payload = JSON.parse(atob(session.accessToken.split(".")[1]));
+        setUser({
+          id: payload._id,
+          name: payload.name,
+          email: payload.email,
+          role: payload.role,
+          image: payload.profilePhoto,
+        });
+      } catch (error) {
+        console.error("Error decoding NextAuth JWT token:", error);
+      }
+    }
+
     setLoading(false);
   };
 
   useEffect(() => {
     handleUser();
-  }, [loading]);
+  }, [loading, session]); 
 
   const login = async (data: { email: string; password: string }) => {
     try {
@@ -82,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }
   };
-  
+
   const googleLogin = async () => {
     try {
       setLoading(true);
@@ -147,7 +167,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, googleLogin }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, logout, googleLogin }}
+    >
       {children}
     </AuthContext.Provider>
   );

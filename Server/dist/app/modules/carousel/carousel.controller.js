@@ -27,11 +27,25 @@ const getAllImages = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0
     });
 }));
 const createFeatureImage = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield carousel_service_1.CarouselServices.createFeatureImagesIntoDB(req.body);
+    const file = req.file;
+    const { name } = req.body;
+    if (!file) {
+        return (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.BAD_REQUEST,
+            success: false,
+            message: 'Image file is required',
+            data: null,
+        });
+    }
+    const imageData = {
+        name,
+        img_url: file.path,
+    };
+    const result = yield carousel_service_1.CarouselServices.createFeatureImagesIntoDB(imageData);
     (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.CREATED,
         success: true,
-        statusCode: http_status_1.default.OK,
-        message: "Banner Created Successfully",
+        message: 'Feature image created successfully',
         data: result,
     });
 }));

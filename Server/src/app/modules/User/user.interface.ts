@@ -9,6 +9,8 @@ export type TUser = {
   email: string;
   password: string;
   passwordChangedAt?: Date;
+  googleId?: string;
+  isGoogleUser?: boolean;
   gender?: string;
   dateOfBirth?: Date;
   mobileNumber?: string;

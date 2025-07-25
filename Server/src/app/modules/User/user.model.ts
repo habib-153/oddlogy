@@ -27,8 +27,19 @@ const userSchema = new Schema<TUser, IUserModel>(
     },
     password: {
       type: String,
-      required: true,
-      select: 0,
+      required: function () {
+        // Password is only required for non-Google users
+        return !this.isGoogleUser;
+      },
+      select: 0
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+    },
+    isGoogleUser: {
+      type: Boolean,
+      default: false,
     },
     passwordChangedAt: {
       type: Date,
@@ -42,14 +53,11 @@ const userSchema = new Schema<TUser, IUserModel>(
     gender: {
       type: String,
       enum: ['male', 'female', 'other'],
-      match: [
-        /^(male|female|other)$/,
-        'Please fill a valid gender'
-      ],
+      match: [/^(male|female|other)$/, 'Please fill a valid gender'],
     },
     profilePhoto: {
       type: String,
-      default: null
+      default: null,
     },
     isDeleted: {
       type: Boolean,
