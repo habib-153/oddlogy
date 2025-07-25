@@ -13,3 +13,10 @@ export type TRegisterUser = {
   password: string;
   role: keyof typeof USER_ROLE;
 };
+
+export interface GoogleUserData {
+  email: string;
+  name: string;
+  picture?: string;
+  sub: string; 
+}

@@ -12,7 +12,7 @@ export function useInstructors() {
   return useQuery<Instructor[], Error>({
     queryKey: ["instructors"],
     queryFn: async () => {
-      const res = await axiosInstance.get("/users?role=instructor");
+      const res = await axiosInstance.get("/instructors");
       return res.data.data || [];
     },
     staleTime: 1000 * 60 * 10,

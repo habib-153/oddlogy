@@ -40,6 +40,16 @@ const loginUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, v
         },
     });
 }));
+const handleGoogleAuth = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { googleUserData } = req.body;
+    const result = yield auth_service_1.AuthServices.handleGoogleUser(googleUserData);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Google authentication successful',
+        data: result,
+    });
+}));
 // const registerUser = catchAsync(async (req, res) => {
 //   const result = await AuthServices.registerUser(req.body);
 //   const { refreshToken, accessToken } = result;
@@ -116,4 +126,5 @@ const loginUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, v
 exports.AuthControllers = {
     registerUser,
     loginUser,
+    handleGoogleAuth,
 };

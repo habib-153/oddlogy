@@ -42,7 +42,8 @@ const LoginForm = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      await googleLogin();
+      const res = await googleLogin();
+      console.log("Google Login Response:", res);
       toast({
         title: "Welcome!",
         description: "You have successfully logged in with Google.",
