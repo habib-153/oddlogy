@@ -57,25 +57,25 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
       },
       {
         title: "User Management",
-        href: "/admin/users",
+        href: "/admin/user-management",
         icon: Users,
-        children: [
-          {
-            title: "All Users",
-            href: "/admin/users",
-            icon: Users,
-          },
-          {
-            title: "Instructors",
-            href: "/admin/instructors",
-            icon: GraduationCap,
-          },
-          {
-            title: "Students",
-            href: "/admin/students",
-            icon: User,
-          },
-        ],
+        // children: [
+        //   {
+        //     title: "All Users",
+        //     href: "/admin/users",
+        //     icon: Users,
+        //   },
+        //   {
+        //     title: "Instructors",
+        //     href: "/admin/instructors",
+        //     icon: GraduationCap,
+        //   },
+        //   {
+        //     title: "Students",
+        //     href: "/admin/students",
+        //     icon: User,
+        //   },
+        // ],
       },
       {
         title: "Carousel Management",
@@ -83,19 +83,9 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
         icon: Image,
       },
       {
-        title: "Analytics",
-        href: "/admin/analytics",
-        icon: BarChart3,
-      },
-      {
         title: "Profile",
         href: "/admin/profile",
         icon: User,
-      },
-      {
-        title: "Settings",
-        href: "/admin/settings",
-        icon: Settings,
       },
     ],
   },
