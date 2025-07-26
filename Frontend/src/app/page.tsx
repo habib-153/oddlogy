@@ -1,16 +1,12 @@
 import HeroCarousel from "@/components/sections/HeroCarousel";
-import ProductGrid from "@/components/sections/ProductGrid";
+import CourseGrid from "@/components/sections/CourseGrid";
 import FeatureSection from "@/components/sections/FeatureSection";
 import CallToAction from "@/components/sections/CallToAction";
 import CounterStats from "@/components/sections/CounterStats";
 import Footer from "@/components/shared/footer";
 import ClassLevelsGrid from "@/components/sections/ClassLevel";
-import TestimonialCarousel from "@/components/sections/Testimonials";
-import { hscCourses, skillDevelopmentCourses } from "@/constants";
 
 const HomePage = () => {
-
-  // Feature section data
   const features = [
     {
       id: "1",
@@ -35,54 +31,25 @@ const HomePage = () => {
     },
   ];
 
-  // Counter stats data
-  const counterStats = [
-    {
-      id: "1",
-      icon: "fas fa-star",
-      value: 4872,
-      title: "Students Enrolled",
-    },
-    {
-      id: "2",
-      icon: "fas fa-chalkboard-teacher",
-      value: 523,
-      title: "Expert Instructors",
-    },
-    {
-      id: "3",
-      icon: "fas fa-user-plus",
-      value: 810,
-      title: "Admitted Today",
-    },
-    {
-      id: "4",
-      icon: "fas fa-certificate",
-      value: 6000,
-      title: "Certifications Issued",
-    },
-  ];
-
   return (
     <>
       <main>
         <HeroCarousel />
-
         <ClassLevelsGrid />
-
         <FeatureSection title="Choose Your Desired Path" features={features} />
 
-        <ProductGrid
+        {/* Replace ProductGrid with CourseGrid */}
+        <CourseGrid
           title="Skill Development All Courses"
-          products={skillDevelopmentCourses}
+          category="Skill Development"
+          limit={4}
         />
 
-        {/* <TestimonialCarousel /> */}
-        <ProductGrid
-          title="Free Courses For HSC & Admission Candidate"
-          products={hscCourses}
+        <CourseGrid
+          title="Courses For Admission Candidate"
+          category="Admission"
+          limit={4}
         />
-
 
         <CallToAction
           title="Need the best teacher-made class notes and lecture sheets?"
@@ -91,10 +58,7 @@ const HomePage = () => {
           imageUrl="/assets/img/others/sheets.png"
         />
 
-        <CounterStats
-          title="Our Success For 2022-24 Academic Year"
-          counters={counterStats}
-        />
+        <CounterStats />
       </main>
       <Footer />
     </>

@@ -17,7 +17,35 @@ interface CounterStatsProps {
   counters: CounterItem[];
 }
 
-export default function CounterStats({ title, counters }: CounterStatsProps) {
+const counterStats = [
+  {
+    id: "1",
+    icon: "fas fa-star",
+    value: 4872,
+    title: "Students Enrolled",
+  },
+  {
+    id: "2",
+    icon: "fas fa-chalkboard-teacher",
+    value: 523,
+    title: "Expert Instructors",
+  },
+  {
+    id: "3",
+    icon: "fas fa-user-plus",
+    value: 810,
+    title: "Admitted Today",
+  },
+  {
+    id: "4",
+    icon: "fas fa-certificate",
+    value: 6000,
+    title: "Certifications Issued",
+  },
+];
+
+
+export default function CounterStats() {
   const [hasAnimated, setHasAnimated] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -46,11 +74,11 @@ export default function CounterStats({ title, counters }: CounterStatsProps) {
     <section ref={sectionRef} className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-          {title}
+          Our Achievements
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {counters.map((counter) => (
+          {counterStats.map((counter) => (
             <Card
               key={counter.id}
               className="border shadow-sm hover:shadow-md transition-shadow overflow-hidden"
@@ -58,7 +86,7 @@ export default function CounterStats({ title, counters }: CounterStatsProps) {
               <CardContent className="text-center p-6">
                 <i
                   className={`${counter.icon} text-4xl ${
-                    counter.color || "text-[#D2DD27]"
+                     "text-[#D2DD27]"
                   } mb-4`}
                 ></i>
                 <div className="text-4xl font-bold mb-2">
@@ -73,7 +101,7 @@ export default function CounterStats({ title, counters }: CounterStatsProps) {
                 </div>
                 <Progress
                   value={hasAnimated ? 100 : 0}
-                  className={`h-1.5 ${counter.color || "bg-[#D2DD27]/20"}`}
+                  className={`h-1.5 ${ "bg-[#D2DD27]/20"}`}
                   style={{
                     transition: "all 2s ease-out",
                   }}

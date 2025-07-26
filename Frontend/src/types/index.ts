@@ -15,3 +15,34 @@ export interface TModule {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface ProductCardProps {
+  id: string;
+  imageUrl: string;
+  title: string;
+  price: string;
+  description?: string;
+  category?: string;
+  status?: string;
+  studentsEnrolled?: number;
+  moduleCount?: number;
+  className?: string;
+}
+
+export interface Product {
+  id: string;
+  imageUrl: string;
+  title: string;
+  price: string;
+  description?: string;
+  category?: string;
+  status?: string;
+  studentsEnrolled?: number;
+  moduleCount?: number;
+}
+
+export interface ProductGridProps {
+  title: string;
+  products: Product[];
+  viewAllLink?: string;
+}
