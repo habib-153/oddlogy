@@ -1,5 +1,5 @@
-import ClientProfilePage from "@/components/profile/EnhancedClientProfilePage";
+import NewProfilePage from "@/components/profile/NewProfilePage";
 
 export default function UserProfilePage() {
-    return <ClientProfilePage isAdmin={false} />;
+    return <NewProfilePage isAdmin={false} />;
 }

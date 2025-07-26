@@ -38,7 +38,7 @@ export default function DashboardLayout({
   // Get user from either source
   const user = session?.user || authUser;
   const userRole = role || user?.role || "user";
-console.log(user)
+  console.log(user)
   const handleLogout = async () => {
     if (session) {
       await signOut({ redirect: false });
@@ -63,11 +63,11 @@ console.log(user)
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
-      {/* <DynamicSidebar
+      <DynamicSidebar
         config={sidebarConfig}
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-      /> */}
+      />
 
       {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
