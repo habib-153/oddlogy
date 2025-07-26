@@ -49,7 +49,6 @@ export default function ODSelect({
     <div className="space-y-2">
       <Label htmlFor={name} className="text-sm font-medium">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
 
       <Select

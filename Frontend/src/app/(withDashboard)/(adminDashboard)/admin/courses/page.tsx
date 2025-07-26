@@ -32,18 +32,20 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Eye, View } from "lucide-react";
 import AddCourseModal from "@/components/courses/AddCourseModal";
 import UpdateCourseModal from "@/components/courses/UpdateCourseModal";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { TCourse } from "@/types/course";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function CourseManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<TCourse | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const router = useRouter();
 
   const { data: courses = [], isLoading, error } = useCourses();
   const { mutate: deleteCourse, isPending: isDeleting } = useDeleteCourse();
@@ -252,6 +254,16 @@ export default function CourseManagementPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  router.push(`/admin/courses/${course._id}`)
+                                }
+                                className="text-white bg-brand-secondary hover:bg-brand-secondary/90"
+                              >
+                                Details
+                              </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
