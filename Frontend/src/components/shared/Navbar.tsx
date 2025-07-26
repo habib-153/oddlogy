@@ -31,7 +31,7 @@ const navigationItems = [
   { name: "Courses", href: "/courses", icon: BookOpen },
   { name: "Skills", href: "/skills", icon: GraduationCap },
   { name: "Admission", href: "/admission", icon: User },
-  { name: "Online Batch", href: "/online-batch", icon: Monitor },
+  { name: "Academic", href: "/academic", icon: Monitor },
 ];
 
 export default function Header() {

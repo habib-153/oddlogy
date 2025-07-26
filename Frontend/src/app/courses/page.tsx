@@ -1,47 +1,55 @@
-"use client"
-import React from "react";
-import { useCourses } from "@/hooks/courses.hook";
-import { TCourse, TCourseCategory } from "@/types/course";
-import ProductGrid from "@/components/sections/ProductGrid";
+"use client";
+
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { TCourseCategory } from "@/types/course";
+import CourseList from "@/components/courses/CourseList";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const categories: TCourseCategory[] = [
-    "HSC",
-    "Admission",
-    "Skill Development",
-    "Others",
+  "HSC",
+  "Admission",
+  "Skill Development",
+  "Others",
 ];
 
-const CoursesPage = () => {
-    const { data: courses = [], isLoading, error } = useCourses();
+export default function CoursesPage() {
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get("category") as TCourseCategory;
+  const [selectedCategory, setSelectedCategory] = useState<
+    TCourseCategory | "all"
+  >(initialCategory || "all");
 
-    if (isLoading) return <div className="p-8 text-center">Loading...</div>;
-    if (error) return <div className="p-8 text-center text-red-500">{error.message}</div>;
-    console.log("Courses data:", courses);
-    return (
-        <div className="container mx-auto py-8">
-            <h1 className="text-3xl font-bold mb-8">All Courses</h1>
-            {categories.map((cat) => {
-                const filtered = courses.filter((c) => c.courseCategory === cat);
-                if (!filtered.length) return null;
-                // Adapt course data for ProductGrid
-                const products = filtered.map((course) => ({
-                    id: course._id || "",
-                    imageUrl: course.media?.thumbnail || "",
-                    title: course.title,
-                    price: course.price ? `$${course.price}` : "Free",
-                    rating: 5, // Placeholder
-                }));
-                return (
-                    <ProductGrid
-                        key={cat}
-                        title={cat + " Courses"}
-                        products={products}
-                        viewAllLink={"/courses"}
-                    />
-                );
-            })}
-        </div>
-    );
-};
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Explore Our Courses</h1>
+        <p className="text-muted-foreground">
+          Find the perfect course to enhance your skills and knowledge
+        </p>
+      </div>
 
-export default CoursesPage;
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <Tabs
+          value={selectedCategory}
+          onValueChange={(value) => setSelectedCategory(value as any)}
+          className="w-full md:w-auto"
+        >
+          <TabsList className="grid grid-cols-2 md:flex md:flex-row gap-2">
+            <TabsTrigger value="all">All Courses</TabsTrigger>
+            {categories.map((category) => (
+              <TabsTrigger key={category} value={category}>
+                {category}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+
+      <CourseList
+        category={selectedCategory === "all" ? undefined : selectedCategory}
+        showHeader={false}
+      />
+    </div>
+  );
+}

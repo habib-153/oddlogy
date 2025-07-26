@@ -23,6 +23,16 @@ export type UserData = {
   specialization?: string;
   createdAt?: string;
   updatedAt?: string;
+  isDeleted?: boolean;
+  isGoogleUser?: boolean;
+  image?: string;
 };
+
+export interface TUserStats {
+  totalUsers: number;
+  activeUsers: number;
+  instructors: number;
+  students: number;
+}
 
 export type ProfileUpdateData = Omit<UserData, 'password' | 'email' | 'createdAt' | 'updatedAt' | '_id' | 'id'>;

@@ -1,39 +1,47 @@
+"use client";
+
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, Users, BookOpen, DollarSign } from "lucide-react";
-
-const statsCards = [
-  {
-    title: "Total Users",
-    value: "2,350",
-    change: "+12%",
-    icon: Users,
-    color: "text-blue-600",
-  },
-  {
-    title: "Total Courses",
-    value: "145",
-    change: "+8%",
-    icon: BookOpen,
-    color: "text-green-600",
-  },
-  {
-    title: "Revenue",
-    value: "$12,450",
-    change: "+15%",
-    icon: DollarSign,
-    color: "text-yellow-600",
-  },
-  {
-    title: "Active Sessions",
-    value: "892",
-    change: "+5%",
-    icon: BarChart3,
-    color: "text-purple-600",
-  },
-];
+import { useCourses } from "@/hooks/courses.hook";
+import Link from "next/link";
+import { useUserStats } from "@/hooks/user.hook";
 
 export default function AdminDashboard() {
+  const { data: userStats, isLoading: userStatsLoading } = useUserStats();
+  const { data: courses = [], isLoading: coursesLoading } = useCourses();
+
+  const statsCards = [
+    {
+      title: "Total Users",
+      value: userStatsLoading
+        ? "..."
+        : userStats?.totalUsers?.toString() || "0",
+      change: "+12%",
+      icon: Users,
+      color: "text-blue-600",
+      href: "/admin/user-management",
+    },
+    {
+      title: "Total Courses",
+      value: coursesLoading ? "..." : courses.length.toString(),
+      change: "+8%",
+      icon: BookOpen,
+      color: "text-green-600",
+      href: "/admin/courses",
+    },
+    {
+      title: "Instructors",
+      value: userStatsLoading
+        ? "..."
+        : userStats?.instructors?.toString() || "0",
+      change: "+5%",
+      icon: BarChart3,
+      color: "text-purple-600",
+      href: "/admin/user-management",
+    },
+  ];
+
   return (
     <DashboardLayout role="admin">
       <div className="space-y-6">
@@ -45,25 +53,27 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {statsCards.map((stat) => {
             const Icon = stat.icon;
             return (
-              <Card key={stat.title}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {stat.title}
-                  </CardTitle>
-                  <Icon className={`h-4 w-4 ${stat.color}`} />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="text-green-600">{stat.change}</span> from
-                    last month
-                  </p>
-                </CardContent>
-              </Card>
+              <Link key={stat.title} href={stat.href}>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      {stat.title}
+                    </CardTitle>
+                    <Icon className={`h-4 w-4 ${stat.color}`} />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    <p className="text-xs text-muted-foreground">
+                      <span className="text-green-600">{stat.change}</span> from
+                      last month
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
             );
           })}
         </div>
@@ -106,15 +116,16 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <button className="w-full text-left p-2 hover:bg-gray-100 rounded-md">
-                  Add New Course
-                </button>
-                <button className="w-full text-left p-2 hover:bg-gray-100 rounded-md">
-                  Manage Users
-                </button>
-                <button className="w-full text-left p-2 hover:bg-gray-100 rounded-md">
-                  View Analytics
-                </button>
+                <Link href="/admin/courses">
+                  <button className="w-full text-left p-2 hover:bg-gray-100 rounded-md">
+                    Add New Course
+                  </button>
+                </Link>
+                <Link href="/admin/user-management">
+                  <button className="w-full text-left p-2 hover:bg-gray-100 rounded-md">
+                    Manage Users
+                  </button>
+                </Link>
               </div>
             </CardContent>
           </Card>
