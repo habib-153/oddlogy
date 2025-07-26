@@ -18,8 +18,8 @@ export async function getMyProfile(): Promise<UserData | null> {
       message: error.message,
       status: error.response?.status,
       data: error.response?.data,
-      headers: error.response?.headers
     });
+    // Return null instead of throwing, so the app doesn't break
     return null;
   }
 }

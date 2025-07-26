@@ -14,7 +14,7 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
 
     // checking if the token is missing
     if (!authorizationHeader) {
-      console.log(`Authorization Header: ${authorizationHeader}`);
+
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
     }
 

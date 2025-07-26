@@ -16,6 +16,11 @@ export type UserData = {
   mobileNumber?: string;
   address?: string;
   role?: string;
+  // Instructor-specific fields
+  designation?: string;
+  qualifications?: string;
+  experience?: string;
+  specialization?: string;
   createdAt?: string;
   updatedAt?: string;
 };

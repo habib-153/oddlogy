@@ -39,13 +39,21 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      data: error.response?.data,
-      headers: error.config?.headers
-    });
+    // Create a comprehensive error object for logging
+    const errorInfo = {
+      message: error.message || 'Unknown error',
+      status: error.response?.status || 'No status',
+      statusText: error.response?.statusText || 'No status text',
+      url: error.config?.url || 'No URL',
+      method: error.config?.method?.toUpperCase() || 'No method',
+      data: error.response?.data || 'No response data',
+      headers: error.config?.headers || 'No request headers',
+      responseHeaders: error.response?.headers || 'No response headers'
+    };
+    
+    console.error("API Error:", errorInfo);
+    
+    // Instead of console.error with the error object directly
     return Promise.reject(error);
   }
 );
