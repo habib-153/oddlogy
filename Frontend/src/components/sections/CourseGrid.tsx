@@ -35,7 +35,7 @@ export default function CourseGrid({
     id: course._id || "",
     imageUrl: course.media?.thumbnail || "",
     title: course.title,
-    price: course.courseType === "free" ? "Free" : `$${course.price}`,
+    price: course.courseType === "free" ? "Free" : `৳${course.price}`,
     description: course.description,
     category: course.courseCategory,
     status: course.courseStatus,

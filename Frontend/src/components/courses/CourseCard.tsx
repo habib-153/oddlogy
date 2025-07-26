@@ -29,7 +29,7 @@ export default function CourseCard({course} : { course: TCourse }) {
           >
             {course.courseType === "free"
               ? "Free"
-              : `$${course.salePrice || course.price}`}
+              : `৳${course.salePrice || course.price}`}
           </Badge>
         </div>
         <CardHeader>

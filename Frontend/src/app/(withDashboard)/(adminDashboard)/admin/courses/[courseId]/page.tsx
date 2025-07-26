@@ -191,7 +191,7 @@ export default function CourseDetailsPage({ params }: CourseDetailsPageProps) {
                   <p className="text-2xl font-bold text-purple-600">
                     {course.courseType === "free"
                       ? "Free"
-                      : `$${course.salePrice || course.price || 0}`}
+                      : `৳${course.salePrice || course.price || 0}`}
                   </p>
                   <p className="text-sm text-purple-600">Price</p>
                 </div>

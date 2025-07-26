@@ -236,13 +236,13 @@ export default function CourseManagementPage() {
                             {course.courseType === "paid" ? (
                               <div className="flex flex-col">
                                 <span className="font-medium">
-                                  ${course.salePrice || course.price || 0}
+                                  ৳{course.salePrice || course.price || 0}
                                 </span>
                                 {course.salePrice &&
                                   course.price &&
                                   course.salePrice !== course.price && (
                                     <span className="text-sm text-muted-foreground line-through">
-                                      ${course.price}
+                                      ৳{course.price}
                                     </span>
                                   )}
                               </div>
