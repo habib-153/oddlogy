@@ -8,14 +8,6 @@ import { TUserProfileUpdate } from "./profile.interface";
 const getMyProfile = async (user: JwtPayload) => {
     const profile = await User.findOne({
         email: user.email,
-    })
-    .populate({
-        path: 'followers',
-        select: 'name email profilePhoto status isVerified', // Select only needed fields
-    })
-    .populate({
-        path: 'following',
-        select: 'name email profilePhoto status isVerified',
     });
 
     if (!profile) {
