@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllCourses, getCourseById,  deleteCourse, addCourseWithFiles, updateCourseWithFiles } from "@/utils/courses";
+import { getAllCourses, getCourseById,  deleteCourse, addCourseWithFiles, updateCourseWithFiles, enrollCourse, getAllEnrollments, updateEnrollmentStatus } from "@/utils/courses";
 import { TCourse } from "@/types/course";
+import { TEnrollment } from "@/types";
 
 export function useCourses(category?: string) {
   return useQuery<TCourse[], Error>({
@@ -55,6 +56,47 @@ export function useDeleteCourse() {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
       queryClient.invalidateQueries({ queryKey: ["course", id] });
+    },
+  });
+}
+
+export function useEnrollCourse() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (enrollmentData: any) => enrollCourse(enrollmentData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+    },
+  });
+}
+
+export function useEnrollments(status?: string) {
+  return useQuery<TEnrollment[], Error>({
+    queryKey: ["enrollments", status],
+    queryFn: () => getAllEnrollments(status),
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useUpdateEnrollment(){
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      enrollmentId,
+      status,
+      rejectionReason,
+    }: {
+      enrollmentId: string;
+      status: "pending" | "approved" | "rejected";
+      rejectionReason?: string;
+    }) => updateEnrollmentStatus(enrollmentId, status, rejectionReason),
+    onSuccess: (_, status) => {
+      queryClient.invalidateQueries({ queryKey: ["enrollments", status] });
+      queryClient.invalidateQueries({ queryKey: ["enrollments"] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
   });
 }

@@ -63,11 +63,11 @@ console.log(user)
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
-      {/* <DynamicSidebar
+      <DynamicSidebar
         config={sidebarConfig}
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-      /> */}
+      />
 
       {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
@@ -151,7 +151,7 @@ console.log(user)
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="flex-1 overflow-auto px-6">{children}</main>
       </div>
     </div>
   );

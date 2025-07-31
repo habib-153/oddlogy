@@ -6,6 +6,7 @@ import { CarouselRoutes } from '../modules/carousel/carousel.route';
 import { InstructorRoutes } from '../modules/instructor/instructor.routes';
 import { ModuleRoutes } from '../modules/module/module.routes';
 import { CourseRoutes } from '../modules/course/course.routes';
+import { EnrollmentRoutes } from '../modules/enrollment/enrollment.route';
 
 const router = express.Router();
 
@@ -37,6 +38,10 @@ const moduleRoutes = [
   {
     path: '/courses',
     route: CourseRoutes,
+  },
+  {
+    path: '/enrollments',
+    route: EnrollmentRoutes,
   },
 ];
 

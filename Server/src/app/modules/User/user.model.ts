@@ -78,19 +78,24 @@ const userSchema = new Schema<TUser, IUserModel>(
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // doc
-  // hashing password and save into DB
 
-  user.password = await bcryptjs.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds)
-  );
+  // Only hash password if it exists and has been modified
+  if (user.password && user.isModified('password')) {
+    user.password = await bcryptjs.hash(
+      user.password,
+      Number(config.bcrypt_salt_rounds)
+    );
+  }
 
   next();
 });
 
-// set '' after saving password
+// Update the post-save middleware as well
 userSchema.post('save', function (doc, next) {
-  doc.password = '';
+  // Only clear password if it existed
+  if (doc.password) {
+    doc.password = '';
+  }
   next();
 });
 

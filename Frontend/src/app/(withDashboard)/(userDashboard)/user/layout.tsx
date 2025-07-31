@@ -15,8 +15,7 @@ export default function UserDashboardLayout({
   return (
     <ProtectedRoute allowedRoles={["user"]}>
       <div className="flex min-h-screen">
-        <SidebarClient role="user" />
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1">{children}</main>
       </div>
     </ProtectedRoute>
   );

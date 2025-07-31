@@ -26,6 +26,8 @@ import {
   GraduationCap,
   Monitor,
 } from "lucide-react";
+import Image from "next/image";
+import logo from "@/../public/assets/img/logo-transparent.png"
 
 const navigationItems = [
   { name: "Courses", href: "/courses", icon: BookOpen },
@@ -73,12 +75,7 @@ export default function Header() {
         <nav className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#D2DD27] to-[#A8B823] flex items-center justify-center">
-                <span className="text-sm font-bold text-black">O</span>
-              </div>
-              <span className="text-xl font-bold text-foreground">Oddlogy</span>
-            </div>
+            <Image src={logo} height={60} alt="logo"/>
           </Link>
 
           {/* Desktop Navigation */}

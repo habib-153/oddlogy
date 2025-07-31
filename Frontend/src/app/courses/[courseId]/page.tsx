@@ -1,7 +1,10 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useCourse } from "@/hooks/courses.hook";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, BookOpen, Clock, GraduationCap } from "lucide-react";
@@ -10,7 +13,15 @@ import CourseList from "@/components/courses/CourseList";
 import YouTubeEmbed from "@/components/shared/YouTubeEmbed";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import EnrollmentModal from "@/components/courses/EnrollmentModal";
+import CourseDetailSkeleton from "@/components/courses/CourseDetailSkeleton";
+import { useToast } from "@/hooks/use-toast";
 
 interface CourseDetailPageProps {
   params: Promise<{ courseId: string }>;
@@ -19,7 +30,14 @@ interface CourseDetailPageProps {
 export default function CourseDetailPage({ params }: CourseDetailPageProps) {
   const { courseId } = use(params);
   const { data: course, isLoading } = useCourse(courseId);
+  const { data: session, status } = useSession();
+  const { user: authUser } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
   const [selectedTab, setSelectedTab] = useState("overview");
+  const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
+
+  const user = session?.user || authUser;
 
   // Function to extract YouTube video ID
   const getYouTubeId = (url: string) => {
@@ -29,22 +47,50 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
     return match ? match[1] : null;
   };
 
-  console.log("Course Data:", course);
+  const handleEnrollClick = () => {
+    // Check if user is authenticated
+    if (status === "loading") {
+      toast({
+        title: "Please wait",
+        description: "Checking authentication...",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to enroll in this course",
+        variant: "destructive",
+      });
+      // Redirect to login with return URL
+      router.push(`/login?redirect=/courses/${courseId}`);
+      return;
+    }
+
+    // Open enrollment modal if authenticated
+    setShowEnrollmentModal(true);
+  };
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto py-8 animate-pulse">
-        <div className="h-64 bg-gray-200 rounded-lg mb-8" />
-        <div className="h-8 bg-gray-200 rounded w-1/2 mb-4" />
-        <div className="h-4 bg-gray-200 rounded w-3/4 mb-8" />
-      </div>
-    );
+    return <CourseDetailSkeleton />;
   }
 
   if (!course) {
     return (
       <div className="container mx-auto py-8 text-center">
-        <h1 className="text-2xl font-bold">Course not found</h1>
+        <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
+            <BookOpen className="w-12 h-12 text-gray-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Course not found</h1>
+          <p className="text-gray-500 max-w-md">
+            The course you&apos;re looking for doesn&apos;t exist or has been removed.
+          </p>
+          <Button onClick={() => window.history.back()} variant="outline">
+            Go Back
+          </Button>
+        </div>
       </div>
     );
   }
@@ -112,41 +158,48 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                 <h3 className="text-xl font-semibold mb-4">
                   Course Curriculum
                 </h3>
-                <Accordion type="single" collapsible className="w-full">
-                  {course.modules?.map((module: any, index: number) => (
-                    <AccordionItem key={module._id} value={`module-${index}`}>
-                      <AccordionTrigger className="hover:no-underline">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-                            <span className="text-sm font-medium text-primary">
-                              {module.module_number}
-                            </span>
+                {course.modules && course.modules.length > 0 ? (
+                  <Accordion type="single" collapsible className="w-full">
+                    {course.modules.map((module: any, index: number) => (
+                      <AccordionItem key={module._id} value={`module-${index}`}>
+                        <AccordionTrigger className="hover:no-underline">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                              <span className="text-sm font-medium text-primary">
+                                {module.module_number}
+                              </span>
+                            </div>
+                            <div className="text-left">
+                              <p className="font-medium">{module.name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {module.isCompleted
+                                  ? "Completed"
+                                  : "Not completed"}
+                              </p>
+                            </div>
                           </div>
-                          <div className="text-left">
-                            <p className="font-medium">{module.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {module.isCompleted
-                                ? "Completed"
-                                : "Not completed"}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="pl-11 pt-2">
+                            <p className="text-sm text-gray-600">
+                              {module.description}
                             </p>
                           </div>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="pl-11 pt-2">
-                          <p className="text-sm text-gray-600">
-                            {module.description}
-                          </p>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                ) : (
+                  <div className="text-center py-8">
+                    <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500">No curriculum available yet</p>
+                  </div>
+                )}
               </div>
             </TabsContent>
 
             <TabsContent value="instructor" className="mt-6">
-              {course.instructor && (
+              {course.instructor ? (
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <Avatar className="h-16 w-16">
@@ -168,6 +221,13 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                     <p>{course.instructor.bio}</p>
                   </div>
                 </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-500">
+                    Instructor information not available
+                  </p>
+                </div>
               )}
             </TabsContent>
           </Tabs>
@@ -183,10 +243,10 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                     "Free"
                   ) : (
                     <>
-                      ${course.salePrice || course.price || 0}
+                      ৳{course.salePrice || course.price || 0}
                       {course.salePrice && course.price && (
                         <span className="text-lg text-muted-foreground line-through ml-2">
-                          ${course.price}
+                          ৳{course.price}
                         </span>
                       )}
                     </>
@@ -198,12 +258,14 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">
-                    {course.studentEnrolled} students
+                    {course.studentEnrolled || 0} students
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{course.moduleCount} modules</span>
+                  <span className="text-sm">
+                    {course.moduleCount || 0} modules
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
@@ -234,13 +296,24 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                 </Badge>
               </div>
 
-              <Button size="lg" className="w-full">
-                Enroll Now
+              <Button
+                onClick={handleEnrollClick}
+                size="lg"
+                className="w-full"
+                disabled={status === "loading"}
+              >
+                {status === "loading" ? "Loading..." : "Enroll Now"}
               </Button>
 
-              <div className="text-sm text-center text-muted-foreground">
-                30-Day Money-Back Guarantee
-              </div>
+              {!user && (
+                <p className="text-xs text-center text-muted-foreground">
+                  Please login to enroll in this course
+                </p>
+              )}
+
+              {/* <div className="text-sm text-center text-muted-foreground">
+                💯 Quality Guaranteed
+              </div> */}
             </div>
           </div>
         </div>
@@ -255,6 +328,16 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
           showHeader={false}
         />
       </div>
+
+      {/* Only show modal if user is authenticated */}
+      {user && (
+        <EnrollmentModal
+          isOpen={showEnrollmentModal}
+          onClose={() => setShowEnrollmentModal(false)}
+          course={course}
+          user={user}
+        />
+      )}
     </div>
   );
 }
