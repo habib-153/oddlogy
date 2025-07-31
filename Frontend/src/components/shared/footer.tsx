@@ -9,6 +9,7 @@ import {
   Linkedin,
   ArrowRight,
 } from "lucide-react";
+import logo from "@/../public/assets/img/logo-white.png";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -19,13 +20,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
             <Link href="/" className="inline-block mb-6">
-              <Image
-                src="/assets/img/logo-transparent.png"
-                alt="Oddology Logo"
-                width={180}
-                height={60}
-                className="h-20 w-auto"
-              />
+              <Image src={logo} alt="Oddology Logo" width={200} height={60} />
             </Link>
             <p className="text-gray-400 mb-4">
               Join Oddology for expert-led online courses. Unlock new skills and
@@ -173,9 +168,13 @@ export default function Footer() {
             <div className="mt-6">
               <h3 className="text-lg font-bold mb-3">Contact</h3>
               <p className="flex items-start text-gray-400 mb-1">
-                <i className="fas fa-map-marker-alt mr-3 text-[#D2DD27] mt-1"></i>
-                3-5, Marco Polo House, Lansdowne Road, London, Surrey, CR0 2BX,
-                United Kingdom
+                <i className="fas fa-phone mr-3 text-[#D2DD27] mt-1"></i>
+                <Link
+                  href="mailto:oddlogyedtech@gmail.com"
+                  className="hover:text-[#D2DD27]"
+                >
+                  oddlogyedtech@gmail.com
+                </Link>
               </p>
               <p className="flex items-start text-gray-400 mb-1">
                 <i className="fas fa-phone mr-3 text-[#D2DD27] mt-1"></i>
@@ -189,7 +188,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-700 pt-8 text-center">
           <p className="text-gray-400">
-            © 2019-{currentYear} All rights reserved by Moksy
+            © 2019-{currentYear} All rights reserved by ODDLOGY
           </p>
         </div>
       </div>

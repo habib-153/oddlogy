@@ -1,3 +1,6 @@
+import { UserData } from "./auth";
+import { TCourse } from "./course";
+
 export interface TCarouselImage {
   _id?: string;
   name: string;
@@ -45,4 +48,23 @@ export interface ProductGridProps {
   title: string;
   products: Product[];
   viewAllLink?: string;
+}
+
+export interface TEnrollment {
+  _id?: string;
+  courseId: TCourse
+  studentId: UserData
+  studentName: string;
+  studentEmail: string;
+  studentPhone: string;
+  paymentMethod?: "bkash" | "nagad" | "rocket";
+  transactionId?: string;
+  paymentNumber?: string;
+  amount: number;
+  status: "pending" | "approved" | "rejected";
+  enrollmentDate: Date;
+  approvalDate?: Date;
+  approvedBy?: string
+  rejectionReason?: string;
+  isDeleted: boolean;
 }

@@ -11,14 +11,12 @@ import {
   Users,
   Settings,
   Image,
-  GraduationCap,
   User,
   FileText,
   BarChart3,
-  Calendar,
-  Mail,
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -54,6 +52,11 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
         title: "Course Management",
         href: "/admin/courses",
         icon: BookOpen,
+      },
+      {
+        title: "Enrollment Management",
+        href: "/admin/enrollments",
+        icon: GraduationCap,
       },
       {
         title: "User Management",
