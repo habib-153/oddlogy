@@ -263,7 +263,9 @@ export function DynamicSidebar({
     >
       <div className="flex h-14 items-center border-b px-3">
         {!collapsed && (
-          <h2 className="text-lg font-semibold truncate">{config.title}</h2>
+          <Link href='/'>
+            <h2 className="text-lg font-semibold truncate">{config.title}</h2>
+          </Link>
         )}
         {onToggle && (
           <Button

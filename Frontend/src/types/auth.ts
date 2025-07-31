@@ -25,7 +25,6 @@ export type UserData = {
   updatedAt?: string;
   isDeleted?: boolean;
   isGoogleUser?: boolean;
-  image?: string;
 };
 
 export interface TUserStats {

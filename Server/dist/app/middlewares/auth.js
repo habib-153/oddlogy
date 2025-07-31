@@ -23,7 +23,6 @@ const auth = (...requiredRoles) => {
         const authorizationHeader = req.headers.authorization;
         // checking if the token is missing
         if (!authorizationHeader) {
-            console.log(`Authorization Header: ${authorizationHeader}`);
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
         }
         // Extract token from "Bearer <token>" format
@@ -33,7 +32,6 @@ const auth = (...requiredRoles) => {
         if (!token) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
         }
-        console.log('Token received:', token.substring(0, 20) + '...');
         const decoded = (0, verifyJWT_1.verifyToken)(token, config_1.default.jwt_access_secret);
         const { role, email, iat } = decoded;
         // checking if the user is exist

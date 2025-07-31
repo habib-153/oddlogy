@@ -11,6 +11,7 @@ const carousel_route_1 = require("../modules/carousel/carousel.route");
 const instructor_routes_1 = require("../modules/instructor/instructor.routes");
 const module_routes_1 = require("../modules/module/module.routes");
 const course_routes_1 = require("../modules/course/course.routes");
+const enrollment_route_1 = require("../modules/enrollment/enrollment.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -40,6 +41,10 @@ const moduleRoutes = [
     {
         path: '/courses',
         route: course_routes_1.CourseRoutes,
+    },
+    {
+        path: '/enrollments',
+        route: enrollment_route_1.EnrollmentRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

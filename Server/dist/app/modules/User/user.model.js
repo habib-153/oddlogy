@@ -81,6 +81,22 @@ const userSchema = new mongoose_1.Schema({
             ref: 'Course',
         },
     ],
+    // Instructor-specific fields
+    designation: {
+        type: String,
+    },
+    qualifications: {
+        type: String,
+    },
+    experience: {
+        type: String,
+    },
+    specialization: {
+        type: String,
+    },
+    bio: {
+        type: String,
+    },
 }, {
     timestamps: true,
 });
@@ -88,14 +104,19 @@ userSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const user = this; // doc
-        // hashing password and save into DB
-        user.password = yield bcryptjs_1.default.hash(user.password, Number(config_1.default.bcrypt_salt_rounds));
+        // Only hash password if it exists and has been modified
+        if (user.password && user.isModified('password')) {
+            user.password = yield bcryptjs_1.default.hash(user.password, Number(config_1.default.bcrypt_salt_rounds));
+        }
         next();
     });
 });
-// set '' after saving password
+// Update the post-save middleware as well
 userSchema.post('save', function (doc, next) {
-    doc.password = '';
+    // Only clear password if it existed
+    if (doc.password) {
+        doc.password = '';
+    }
     next();
 });
 userSchema.statics.isUserExistsByEmail = function (email) {

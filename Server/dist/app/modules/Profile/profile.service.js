@@ -19,14 +19,6 @@ const http_status_1 = __importDefault(require("http-status"));
 const getMyProfile = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const profile = yield user_model_1.User.findOne({
         email: user.email,
-    })
-        .populate({
-        path: 'followers',
-        select: 'name email profilePhoto status isVerified', // Select only needed fields
-    })
-        .populate({
-        path: 'following',
-        select: 'name email profilePhoto status isVerified',
     });
     if (!profile) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User does not exixts!");

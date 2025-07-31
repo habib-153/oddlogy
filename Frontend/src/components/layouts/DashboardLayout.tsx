@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Search, Menu, LogOut, Settings, User } from "lucide-react";
+import { Bell, Search, Menu, LogOut, Settings, User, Home } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
@@ -106,7 +106,8 @@ export default function DashboardLayout({
                 <Avatar className="h-8 w-8">
                   <AvatarImage
                     src={
-                      (user as any)?.profilePhoto || user?.image ||
+                      (user as any)?.profilePhoto ||
+                      user?.image ||
                       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                     }
                     alt={user?.name || ""}
@@ -125,21 +126,22 @@ export default function DashboardLayout({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className=""
+              <DropdownMenuItem
+                className=""
+                onClick={() =>
+                  router.push(`/`)
+                }
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Home
+              </DropdownMenuItem>
+              <DropdownMenuItem
                 onClick={() =>
                   router.push(`/${userRole.toLowerCase()}/profile`)
                 }
               >
                 <User className="mr-2 h-4 w-4" />
                 Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  router.push(`/${userRole.toLowerCase()}/settings`)
-                }
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>

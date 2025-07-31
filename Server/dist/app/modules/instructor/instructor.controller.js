@@ -22,7 +22,7 @@ const getAllInstructor = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(vo
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
-        message: "Instructors Retrieved Successfully",
+        message: "All Instructors Retrieved Successfully",
         data: instructors,
     });
 }));
@@ -56,9 +56,20 @@ const deleteInstructorById = (0, catchAsync_1.catchAsync)((req, res) => __awaite
         data: instructor,
     });
 }));
+const getInstructorCourses = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield instructor_service_1.InstructorServices.getInstructorCourses(user);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Instructor courses retrieved successfully',
+        data: result,
+    });
+}));
 exports.InstructorControllers = {
     getAllInstructor,
     getInstructorById,
     updateInstructorById,
-    deleteInstructorById
+    deleteInstructorById,
+    getInstructorCourses,
 };
