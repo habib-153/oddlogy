@@ -38,7 +38,7 @@ export default function DashboardLayout({
   // Get user from either source
   const user = session?.user || authUser;
   const userRole = role || user?.role || "user";
-console.log(user)
+  console.log(user)
   const handleLogout = async () => {
     if (session) {
       await signOut({ redirect: false });

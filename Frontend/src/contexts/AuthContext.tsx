@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     handleUser();
-  }, [loading, session]); 
+  }, [loading, session]);
 
   const login = async (data: { email: string; password: string }) => {
     try {
@@ -89,7 +89,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.success) {
         setAuthCookie(res?.data?.accessToken);
         setUser(res?.data?.user);
-        router.push(res?.data?.user?.role === "admin" ? "/admin" : "/user");
+
+        // Redirect based on user role
+        const userRole = res?.data?.user?.role?.toLowerCase();
+        switch (userRole) {
+          case "admin":
+            router.push("/admin");
+            break;
+          case "instructor":
+            router.push("/instructor");
+            break;
+          case "user":
+          default:
+            router.push("/user");
+            break;
+        }
       } else {
         throw new Error(
           res.message || "Login failed. Please check your credentials."
@@ -107,12 +121,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const result = await signIn("google", {
-        callbackUrl: "/user",
-        redirect: true,
+        redirect: false, // Don't auto-redirect, we'll handle it manually
       });
 
       if (result?.error) {
         throw new Error(result.error);
+      }
+
+      // After successful Google sign-in, redirect based on role
+      if (result?.ok) {
+        // Wait a moment for session to be updated
+        setTimeout(async () => {
+          const cookieUser = await getCurrentUser();
+          if (cookieUser) {
+            const userRole = cookieUser.role?.toLowerCase();
+            switch (userRole) {
+              case "admin":
+                router.push("/admin");
+                break;
+              case "instructor":
+                router.push("/instructor");
+                break;
+              case "user":
+              default:
+                router.push("/user");
+                break;
+            }
+          } else {
+            router.push("/user"); // fallback
+          }
+        }, 1000);
       }
     } catch (error) {
       console.error("Google login failed:", error);

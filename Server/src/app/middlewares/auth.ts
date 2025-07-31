@@ -14,7 +14,7 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
 
     // checking if the token is missing
     if (!authorizationHeader) {
-      console.log(`Authorization Header: ${authorizationHeader}`);
+
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
     }
 
@@ -27,7 +27,6 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
     }
 
-    console.log('Token received:', token.substring(0, 20) + '...');
 
     const decoded = verifyToken(
       token,
