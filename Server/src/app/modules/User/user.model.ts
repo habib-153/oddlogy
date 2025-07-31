@@ -69,22 +69,6 @@ const userSchema = new Schema<TUser, IUserModel>(
         ref: 'Course',
       },
     ],
-    // Instructor-specific fields
-    designation: {
-      type: String,
-    },
-    qualifications: {
-      type: String,
-    },
-    experience: {
-      type: String,
-    },
-    specialization: {
-      type: String,
-    },
-    bio: {
-      type: String,
-    },
   },
   {
     timestamps: true,
