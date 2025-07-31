@@ -1,10 +1,10 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import NewProfilePage from "@/components/profile/NewProfilePage";
+import ClientProfilePage from "@/components/profile/EnhancedClientProfilePage";
 
 export default function AdminProfilePage() {
     return (
       <DashboardLayout role="admin">
-        <NewProfilePage isAdmin={true} />
+        <ClientProfilePage isAdmin={true} />
       </DashboardLayout>
     );
 }

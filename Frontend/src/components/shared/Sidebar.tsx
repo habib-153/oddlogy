@@ -150,8 +150,27 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
             href: "/instructor/courses",
             icon: BookOpen,
           },
-
+          {
+            title: "Create Course",
+            href: "/instructor/courses/create",
+            icon: BookOpen,
+          },
         ],
+      },
+      {
+        title: "Students",
+        href: "/instructor/students",
+        icon: Users,
+      },
+      {
+        title: "Assignments",
+        href: "/instructor/assignments",
+        icon: FileText,
+      },
+      {
+        title: "Analytics",
+        href: "/instructor/analytics",
+        icon: BarChart3,
       },
       {
         title: "Profile",

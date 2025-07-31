@@ -16,12 +16,6 @@ export type TUser = {
   mobileNumber?: string;
   profilePhoto?: string;
   enrolledCourses?: Types.ObjectId[];
-  // Instructor-specific fields
-  designation?: string;
-  qualifications?: string;
-  experience?: string;
-  specialization?: string;
-  bio?: string;
   createdAt?: Date;
   updatedAt?: Date;
   isDeleted?: boolean;
