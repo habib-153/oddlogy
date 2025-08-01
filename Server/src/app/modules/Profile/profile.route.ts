@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get(
     '/',
-    auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+    auth(USER_ROLE.ADMIN, USER_ROLE.USER, USER_ROLE.INSTRUCTOR),
     ProfileController.getMyProfile
 );
 

@@ -1,6 +1,8 @@
+'use client';
 import envConfig from "@/config/envConfig";
 import axios from "axios";
 import { getAuthCookie } from "@/utils/cookies";
+import { getSession } from "next-auth/react";
 
 const axiosInstance = axios.create({
   baseURL: envConfig.baseApi || "http://localhost:5000/api/v1",
@@ -11,26 +13,31 @@ const axiosInstance = axios.create({
 
 // Add a request interceptor to attach auth token
 axiosInstance.interceptors.request.use(
-  async (config) => {
-    try {
-      // Get the auth token from cookies
-      const authToken = await getAuthCookie();
-      
-      if (authToken) {
-        // Format the authorization header properly with Bearer prefix
-        config.headers["Authorization"] = `Bearer ${authToken}`;
-        console.log("Authorization header set:", `Bearer ${authToken.substring(0, 20)}...`);
-      } else {
-        console.log("No auth token found in cookies");
+  async function (config) {
+    let token = null;
+
+    // const cookieStore = await cookies();
+    token = await getAuthCookie();
+    console.log("Token from cookies:", token);
+
+    if (!token) {
+      try {
+        const session = await getSession();
+        console.log("NextAuth session:", session?.accessToken);
+        if (session?.accessToken) {
+          token = session.accessToken as string;
+        }
+      } catch (error) {
+        console.log("No NextAuth session found");
       }
-      
-      return config;
-    } catch (error) {
-      console.error("Error in axios interceptor:", error);
-      return config;
     }
+    if (token) {
+      config.headers.authorization = token;
+    }
+
+    return config;
   },
-  (error) => {
+  function (error) {
     return Promise.reject(error);
   }
 );

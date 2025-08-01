@@ -12,7 +12,7 @@ export async function getMyProfile(): Promise<UserData | null> {
     console.log("Attempting to fetch profile...");
     const res = await axiosInstance.get("/profile");
     console.log("Profile info response:", res.data);
-    return res.data.data || null;
+    return res.data.data 
   } catch (error: any) {
     console.error("Error fetching profile info:", {
       message: error.message,

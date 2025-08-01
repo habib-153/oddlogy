@@ -44,11 +44,13 @@ const LoginForm = () => {
     try {
       const res = await googleLogin();
       console.log("Google Login Response:", res);
-      toast({
-        title: "Welcome!",
-        description: "You have successfully logged in with Google.",
-        variant: "default",
-      });
+      // if (res) {
+      //   toast({
+      //     title: "Welcome!",
+      //     description: "You have successfully logged in with Google.",
+      //     variant: "default",
+      //   });
+      // }
     } catch (error: any) {
       toast({
         title: "Google Login Failed",
@@ -130,10 +132,7 @@ const LoginForm = () => {
               />
               <span className="text-gray-600">Remember me</span>
             </label>
-            <a
-              href="#"
-              className="text-gray-600 hover:text-black font-medium"
-            >
+            <a href="#" className="text-gray-600 hover:text-black font-medium">
               Forgot password?
             </a>
           </div>

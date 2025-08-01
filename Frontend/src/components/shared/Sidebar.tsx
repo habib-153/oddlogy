@@ -144,24 +144,11 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
         title: "My Courses",
         href: "/instructor/courses",
         icon: BookOpen,
-        children: [
-          {
-            title: "All Courses",
-            href: "/instructor/courses",
-            icon: BookOpen,
-          },
-
-        ],
       },
       {
         title: "Profile",
         href: "/instructor/profile",
         icon: User,
-      },
-      {
-        title: "Settings",
-        href: "/instructor/settings",
-        icon: Settings,
       },
     ],
   },

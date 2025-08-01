@@ -8,6 +8,16 @@ import {
   getCurrentUser,
 } from "@/utils/cookies";
 import { signIn, useSession } from "next-auth/react";
+import { useToast } from "@/hooks/use-toast";
+import { jwtDecode } from "jwt-decode";
+
+interface CustomJwtPayload {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  profilePhoto?: string;
+}
 
 type User = {
   id: string;
@@ -33,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
+  const { toast } = useToast();
 
   const handleUser = async () => {
     const cookieUser = await getCurrentUser();
@@ -45,13 +56,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (session?.accessToken) {
       try {
         const payload = JSON.parse(atob(session.accessToken.split(".")[1]));
-        setUser({
+        // const payload = await jwtDecode(session.accessToken)
+        const userData = {
           id: payload._id,
           name: payload.name,
           email: payload.email,
           role: payload.role,
           image: payload.profilePhoto,
-        });
+        };
+
+        setUser(userData);
+
+        // Only redirect after Google login if we don't have a current user
+        if (!user && session?.user?.role) {
+          const userRole = session.user.role.toLowerCase();
+          switch (userRole) {
+            case "admin":
+              router.push("/admin");
+              break;
+            case "instructor":
+              router.push("/instructor");
+              break;
+            case "user":
+            default:
+              router.push("/user");
+              break;
+          }
+        }
       } catch (error) {
         console.error("Error decoding NextAuth JWT token:", error);
       }
@@ -121,7 +152,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const result = await signIn("google", {
-        redirect: false, // Don't auto-redirect, we'll handle it manually
+        redirect: false,
       });
 
       if (result?.error) {
@@ -131,10 +162,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // After successful Google sign-in, redirect based on role
       if (result?.ok) {
         // Wait a moment for session to be updated
+
+        toast({
+          title: "Welcome!",
+          description: "You have successfully logged in with Google.",
+          variant: "default",
+        });
+
         setTimeout(async () => {
-          const cookieUser = await getCurrentUser();
-          if (cookieUser) {
-            const userRole = cookieUser.role?.toLowerCase();
+          console.log("Session after Google login:", session);
+          if (session?.user) {
+            const userRole = session?.user?.role?.toLowerCase();
             switch (userRole) {
               case "admin":
                 router.push("/admin");

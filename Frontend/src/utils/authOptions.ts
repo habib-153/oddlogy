@@ -25,8 +25,9 @@ export const authOptions: NextAuthOptions = {
               },
             }
           );
-
+console.log("Response from backend after Google sign-in:", response.data);
           if (response.data.success) {
+            console.log("User created/updated successfully:", response.data.data.accessToken);
             // Store the JWT token for later use
             user.accessToken = response.data.data.accessToken;
             user.role = response.data.data.user.role;
@@ -56,12 +57,12 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async redirect({ url, baseUrl }) {
-      // Handle post-login redirects based on user role
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
-    },
+    // async redirect({ url, baseUrl }) {
+    //   // Handle post-login redirects based on user role
+    //   if (url.startsWith("/")) return `${baseUrl}${url}`;
+    //   else if (new URL(url).origin === baseUrl) return url;
+    //   return baseUrl;
+    // },
   },
   pages: {
     signIn: "/login",
