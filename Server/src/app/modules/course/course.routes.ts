@@ -35,6 +35,7 @@ router.patch(
 );
 
 router.delete('/:id', auth(USER_ROLE.ADMIN), CourseControllers.deleteCourse);
+router.get('/user/:userId', CourseControllers.getUserCourses);
 
 router.post(
   '/enroll/:courseId',

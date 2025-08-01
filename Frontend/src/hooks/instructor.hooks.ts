@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/lib/AxiosInstance";
+import { TCourse } from "@/types/course";
 
 export type Instructor = {
   _id: string;
@@ -8,27 +9,6 @@ export type Instructor = {
   profilePhoto?: string;
 };
 
-export type InstructorCourse = {
-  _id: string;
-  title: string;
-  description: string;
-  thumbnail?: string;
-  price: number;
-  level: string;
-  duration: number;
-  studentsEnrolled?: number;
-  category: {
-    _id: string;
-    name: string;
-  };
-  instructor: {
-    _id: string;
-    name: string;
-    email: string;
-  };
-  isActive: boolean;
-  createdAt: string;
-};
 
 export function useInstructors() {
   return useQuery<Instructor[], Error>({
@@ -43,13 +23,13 @@ export function useInstructors() {
 }
 
 export function useInstructorCourses() {
-  return useQuery<{ courses: InstructorCourse[] }, Error>({
+  return useQuery<{ courses: TCourse[], total?:number }, Error>({
     queryKey: ["instructor-courses"],
     queryFn: async () => {
       try {
         console.log("Fetching instructor courses...");
         const res = await axiosInstance.get("/instructors/my-courses");
-        console.log("Instructor courses response:", res.data);
+
         return res.data.data || { courses: [] };
       } catch (error: any) {
         console.error("Error fetching instructor courses:", error.message);

@@ -23,5 +23,6 @@ router.patch('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_c
     { name: 'thumbnail', maxCount: 1 },
 ]), bodyParser_1.parseBody, course_controller_1.CourseControllers.updateCourse);
 router.delete('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), course_controller_1.CourseControllers.deleteCourse);
+router.get('/user/:userId', course_controller_1.CourseControllers.getUserCourses);
 router.post('/enroll/:courseId', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), course_controller_1.CourseControllers.enrollCourse);
 exports.CourseRoutes = router;

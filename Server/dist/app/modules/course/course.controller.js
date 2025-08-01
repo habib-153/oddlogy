@@ -111,6 +111,16 @@ const enrollCourse = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0
         data: result,
     });
 }));
+const getUserCourses = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    const result = yield course_service_1.CourseServices.getUserCoursesFromDB(userId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'User courses retrieved successfully',
+        data: result,
+    });
+}));
 exports.CourseControllers = {
     createCourse,
     getAllCoursesForHome,
@@ -119,4 +129,5 @@ exports.CourseControllers = {
     updateCourse,
     deleteCourse,
     enrollCourse,
+    getUserCourses,
 };

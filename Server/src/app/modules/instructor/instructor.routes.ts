@@ -8,6 +8,12 @@ const router = express.Router();
 router.get('/', InstructorControllers.getAllInstructor);
 
 router.get(
+  '/my-courses',
+  auth(USER_ROLE.INSTRUCTOR),
+  InstructorControllers.getInstructorCourses
+);
+
+router.get(
   '/:id',
   //  auth('ADMIN', 'INSTRUCTOR'),
   InstructorControllers.getInstructorById
@@ -19,12 +25,6 @@ router.delete(
   '/:id',
   auth('ADMIN'),
   InstructorControllers.deleteInstructorById
-);
-
-router.get(
-  '/my-courses',
-  auth(USER_ROLE.INSTRUCTOR),
-  InstructorControllers.getInstructorCourses
 );
 
 export const InstructorRoutes = router;

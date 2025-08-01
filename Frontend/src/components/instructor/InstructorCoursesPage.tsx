@@ -1,225 +1,370 @@
 "use client";
 
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
 import { useInstructorCourses } from "@/hooks/instructor.hooks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, Users, Clock, Calendar, Eye } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  BookOpen,
+  Users,
+  Eye,
+  Search,
+  Clock,
+  CheckCircle,
+  XCircle,
+  PlayCircle,
+} from "lucide-react";
 import Image from "next/image";
+import { TCourse } from "@/types/course";
+import InstructorCourseDetailsPage from "./InstructorCourseDetailsPage";
 
-interface Course {
-    _id: string;
-    title: string;
-    description: string;
-    thumbnail?: string;
-    price: number;
-    level: string;
-    duration: number;
-    studentsEnrolled?: number;
-    category: {
-        _id: string;
-        name: string;
-    };
-    instructor: {
-        _id: string;
-        name: string;
-        email: string;
-    };
-    isActive: boolean;
-    createdAt: string;
-}
-
-const CourseSkeleton = () => (
-    <Card className="overflow-hidden">
-        <div className="aspect-video relative">
-            <Skeleton className="w-full h-full" />
-        </div>
-        <CardHeader>
-            <div className="flex justify-between items-start">
-                <div className="flex-1">
-                    <Skeleton className="h-6 w-3/4 mb-2" />
-                    <Skeleton className="h-4 w-1/2" />
-                </div>
-                <Skeleton className="h-6 w-16" />
-            </div>
-        </CardHeader>
-        <CardContent>
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-2/3 mb-4" />
-            <div className="flex justify-between items-center">
-                <Skeleton className="h-8 w-20" />
-                <Skeleton className="h-8 w-24" />
-            </div>
-        </CardContent>
-    </Card>
+const TableSkeleton = () => (
+  <TableRow>
+    {Array.from({ length: 7 }).map((_, i) => (
+      <TableCell key={i}>
+        <Skeleton className="h-8 w-full" />
+      </TableCell>
+    ))}
+  </TableRow>
 );
 
-const CourseCard = ({ course }: { course: Course }) => {
-    return (
-        <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="aspect-video relative bg-gray-100">
-                {course.thumbnail ? (
-                    <Image
-                        src={course.thumbnail}
-                        alt={course.title}
-                        fill
-                        className="object-cover"
-                    />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                        <BookOpen className="w-12 h-12 text-gray-400" />
-                    </div>
-                )}
-                {!course.isActive && (
-                    <div className="absolute top-2 right-2">
-                        <Badge variant="secondary">Inactive</Badge>
-                    </div>
-                )}
-            </div>
-
-            <CardHeader>
-                <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                        <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
-                        <Badge variant="outline" className="mt-2">
-                            {course.category.name}
-                        </Badge>
-                    </div>
-                    <Badge variant={course.isActive ? "default" : "secondary"}>
-                        {course.isActive ? "Active" : "Inactive"}
-                    </Badge>
-                </div>
-            </CardHeader>
-
-            <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                    {course.description}
-                </p>
-
-                <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-muted-foreground" />
-                        <span>{course.studentsEnrolled || 0} students enrolled</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span>{course.duration} hours</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span>Created {new Date(course.createdAt).toLocaleDateString()}</span>
-                    </div>
-                </div>
-
-                <div className="flex justify-between items-center mt-4 pt-4 border-t">
-                    <div className="flex items-center gap-2">
-                        <Badge variant="outline">{course.level}</Badge>
-                        <span className="font-semibold">${course.price}</span>
-                    </div>
-                    <Button size="sm" variant="outline">
-                        <Eye className="w-4 h-4 mr-2" />
-                        View Details
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
-    );
-};
-
 export default function InstructorCoursesPage() {
-    const { data: session } = useSession();
-    const { user: authUser } = useAuth();
+  const { data: coursesData, isLoading, error } = useInstructorCourses();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState<TCourse | null>(null);
 
-    // Use the instructor courses hook
-    const { data: coursesData, isLoading, error } = useInstructorCourses();
+  const courses = coursesData?.courses || [];
 
-    console.log("Instructor courses data:", {
-        coursesData,
-        isLoading,
-        error,
-        session: session?.user ? true : false,
-        authUser: authUser ? true : false
-    });
+  // Filter courses based on search term
+  const filteredCourses = courses.filter(
+    (course: TCourse) =>
+      course?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course?.courseCategory.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    if (isLoading) {
-        return (
-            <div className="space-y-6">
-                <div>
-                    <Skeleton className="h-8 w-48" />
-                    <Skeleton className="h-4 w-64 mt-2" />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, index) => (
-                        <CourseSkeleton key={index} />
-                    ))}
-                </div>
-            </div>
-        );
+  const totalStudents = filteredCourses.reduce(
+    (sum: number, course: TCourse) => sum + (course.studentEnrolled || 0),
+    0
+  );
+
+  const getStatusBadge = (course: TCourse) => {
+    if (course.isDeleted) {
+      return (
+        <Badge variant="destructive" className="text-xs">
+          <XCircle className="w-3 h-3 mr-1" />
+          Deleted
+        </Badge>
+      );
     }
 
-    if (error) {
-        console.error("Error fetching instructor courses:", error);
+    switch (course.courseStatus) {
+      case "completed":
         return (
-            <div className="text-center py-10">
-                <h2 className="text-xl font-semibold text-red-600">Error loading courses</h2>
-                <p className="text-muted-foreground mt-2">
-                    {error?.message || "Could not load your assigned courses"}
-                </p>
-                <div className="mt-4 p-4 border rounded bg-gray-50 max-w-lg mx-auto text-left">
-                    <h3 className="font-medium">Debug information:</h3>
-                    <pre className="text-xs mt-2 overflow-auto">
-                        Error: {error?.message || "No error message"}<br />
-                        Error Details: {JSON.stringify(error, null, 2)}<br />
-                        Session: {session?.user ? "Available" : "Not available"}<br />
-                        Auth User: {authUser ? "Available" : "Not available"}
-                    </pre>
-                </div>
-            </div>
+          <Badge variant="default" className="text-xs bg-green-500">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Completed
+          </Badge>
+        );
+      case "in-progress":
+        return (
+          <Badge variant="secondary" className="text-xs">
+            <Clock className="w-3 h-3 mr-1" />
+            In Progress
+          </Badge>
+        );
+      case "not-started":
+        return (
+          <Badge variant="outline" className="text-xs">
+            <PlayCircle className="w-3 h-3 mr-1" />
+            Not Started
+          </Badge>
+        );
+      default:
+        return (
+          <Badge variant="outline" className="text-xs">
+            Unknown
+          </Badge>
         );
     }
+  };
 
-    const courses = coursesData?.courses || [];
+  const getBadgeVariant = (type: string) => {
+    switch (type) {
+      case "free":
+        return "secondary";
+      case "paid":
+        return "default";
+      default:
+        return "outline";
+    }
+  };
 
+  const handleViewDetails = (course: TCourse) => {
+    setSelectedCourse(course);
+  };
+
+  const handleBackToCourses = () => {
+    setSelectedCourse(null);
+  };
+
+  // If a course is selected, show the details page
+  if (selectedCourse) {
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-3xl font-bold">My Courses</h1>
-                    <p className="text-muted-foreground">
-                        Courses you are assigned as an instructor
-                    </p>
-                </div>
-                <div className="flex items-center gap-4">
-                    <Badge variant="outline" className="text-sm">
-                        Total: {courses.length}
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                        Active: {courses.filter((course: Course) => course.isActive).length}
-                    </Badge>
-                </div>
-            </div>
-
-            {courses.length === 0 ? (
-                <div className="text-center py-12">
-                    <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">No courses assigned yet</h3>
-                    <p className="text-muted-foreground">
-                        You haven&apos;t been assigned to any courses as an instructor yet.
-                    </p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {courses.map((course: Course) => (
-                        <CourseCard key={course._id} course={course} />
-                    ))}
-                </div>
-            )}
-        </div>
+      <InstructorCourseDetailsPage
+        course={selectedCourse}
+        onBack={handleBackToCourses}
+      />
     );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-5 w-96" />
+        </div>
+
+        <div className="flex gap-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-20 w-32" />
+          ))}
+        </div>
+
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Course</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Students</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <TableSkeleton key={index} />
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error("Error fetching instructor courses:", error);
+    return (
+      <div className="flex flex-col items-center justify-center py-16">
+        <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6">
+          <XCircle className="w-12 h-12 text-red-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Error loading courses
+        </h2>
+        <p className="text-muted-foreground text-center max-w-md mb-6">
+          {error?.message ||
+            "Could not load your assigned courses. Please try again later."}
+        </p>
+        <Button variant="outline" onClick={() => window.location.reload()}>
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4 my-4">
+      {/* Header Section */}
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold text-brand-secondary">
+            My Courses
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Manage and track your assigned courses as an instructor
+          </p>
+        </div>
+
+        {/* Statistics Cards */}
+        <div className="flex flex-wrap gap-4 lg:flex-nowrap">
+          <Card className="flex-1 min-w-[140px]">
+            <CardContent className="p-4 text-center">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <BookOpen className="w-4 h-4 text-blue-500" />
+                <span className="text-2xl font-bold text-blue-600">
+                  {coursesData?.total || 0}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">Total Courses</p>
+            </CardContent>
+          </Card>
+
+          <Card className="flex-1 min-w-[140px]">
+            <CardContent className="p-4 text-center">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <Users className="w-4 h-4 text-purple-500" />
+                <span className="text-2xl font-bold text-purple-600">
+                  {totalStudents}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">Total Students</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Course Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>All Courses ({filteredCourses.length})</span>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search courses..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 w-64"
+                />
+              </div>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {filteredCourses.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="w-32 h-32 bg-blue-50 rounded-full flex items-center justify-center mb-6">
+                <BookOpen className="w-16 h-16 text-blue-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                {searchTerm ? "No courses found" : "No courses assigned yet"}
+              </h3>
+              <p className="text-muted-foreground text-center max-w-md mb-6">
+                {searchTerm
+                  ? "Try adjusting your search terms"
+                  : "You haven't been assigned to any courses as an instructor yet. Contact your administrator to get started."}
+              </p>
+              {searchTerm && (
+                <Button variant="outline" onClick={() => setSearchTerm("")}>
+                  Clear Search
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Course</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Students</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredCourses.map((course: TCourse) => (
+                    <TableRow key={course._id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                            {course.media?.thumbnail ? (
+                              <Image
+                                src={course.media.thumbnail}
+                                alt={course.title}
+                                className="size-10 rounded-lg object-cover"
+                                width={40}
+                                height={40}
+                              />
+                            ) : (
+                              <span className="text-xs font-medium">
+                                {course.title.charAt(0)}
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-medium">{course.title}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {course.moduleCount ||
+                                course.modules?.length ||
+                                0}{" "}
+                              modules
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{course.courseCategory}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getBadgeVariant(course.courseType)}>
+                          {course.courseType}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(course)}</TableCell>
+                      <TableCell>{course.studentEnrolled || 0}</TableCell>
+                      <TableCell>
+                        {course.courseType === "free" ? (
+                          <span className="text-green-600 font-medium">
+                            Free
+                          </span>
+                        ) : (
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              ৳{course.salePrice || course.price || 0}
+                            </span>
+                            {course.salePrice &&
+                              course.price &&
+                              course.salePrice !== course.price && (
+                                <span className="text-sm text-muted-foreground line-through">
+                                  ৳{course.price}
+                                </span>
+                              )}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewDetails(course)}
+                          className="text-white bg-brand-secondary hover:bg-brand-secondary/90"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

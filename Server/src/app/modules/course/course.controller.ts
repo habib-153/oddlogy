@@ -117,6 +117,19 @@ const enrollCourse = catchAsync(async (req, res) => {
   });
 });
 
+const getUserCourses = catchAsync(async (req, res) => {
+  const { userId } = req.params;
+
+  const result = await CourseServices.getUserCoursesFromDB(userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User courses retrieved successfully',
+    data: result,
+  });
+});
+
 export const CourseControllers = {
   createCourse,
   getAllCoursesForHome,
@@ -125,4 +138,5 @@ export const CourseControllers = {
   updateCourse,
   deleteCourse,
   enrollCourse,
+  getUserCourses,
 };

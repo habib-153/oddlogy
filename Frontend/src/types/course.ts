@@ -33,3 +33,21 @@ export type TCourse = {
   isCompleted?: boolean;
   isDeleted?: boolean;
 };
+
+export type TUserCourse = TCourse & {
+  enrollmentInfo: {
+    enrollmentDate: string;
+    approvalDate: string;
+    paymentMethod: string;
+    amount: number;
+  };
+  moduleCount: number;
+  completedModules: number;
+  progressPercentage: number;
+};
+
+export type TUserCoursesResponse = {
+  courses: TUserCourse[];
+  total: number;
+  enrolledCoursesCount: number;
+};

@@ -190,6 +190,162 @@ const enrollCourseIntoDB = async (courseId: string, userId: string) => {
   }
 };
 
+const getUserCoursesFromDB = async (userId: string) => {
+  // Find user by ID
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  // Get user's enrolled courses with enrollment details
+  const courses = await Course.aggregate([
+    // Match courses where user is enrolled
+    {
+      $match: {
+        students: new Types.ObjectId(userId),
+        isDeleted: false,
+      },
+    },
+
+    // Lookup instructor details
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'instructor',
+        foreignField: '_id',
+        as: 'instructor',
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+              email: 1,
+              profilePhoto: 1,
+              designation: 1,
+              qualifications: 1,
+            },
+          },
+        ],
+      },
+    },
+
+    // Lookup modules
+    {
+      $lookup: {
+        from: 'modules',
+        localField: 'modules',
+        foreignField: '_id',
+        as: 'modules',
+        pipeline: [
+          {
+            $match: {
+              isDeleted: false,
+            },
+          },
+          {
+            $project: {
+              name: 1,
+              description: 1,
+              module_number: 1,
+              video_url: 1,
+              isCompleted: 1,
+              createdAt: 1,
+            },
+          },
+          {
+            $sort: { module_number: 1 },
+          },
+        ],
+      },
+    },
+
+    // Lookup enrollment details for this specific user
+    {
+      $lookup: {
+        from: 'enrollments',
+        let: { courseId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$courseId', '$$courseId'] },
+                  { $eq: ['$studentId', new Types.ObjectId(userId)] },
+                  { $eq: ['$status', 'approved'] },
+                  { $eq: ['$isDeleted', false] },
+                ],
+              },
+            },
+          },
+          {
+            $project: {
+              enrollmentDate: 1,
+              approvalDate: 1,
+              paymentMethod: 1,
+              amount: 1,
+            },
+          },
+        ],
+        as: 'enrollmentInfo',
+      },
+    },
+
+    // Add computed fields
+    {
+      $addFields: {
+        instructor: { $arrayElemAt: ['$instructor', 0] },
+        moduleCount: { $size: '$modules' },
+        enrollmentInfo: { $arrayElemAt: ['$enrollmentInfo', 0] },
+        completedModules: {
+          $size: {
+            $filter: {
+              input: '$modules',
+              cond: { $eq: ['$$this.isCompleted', true] },
+            },
+          },
+        },
+      },
+    },
+
+    // Calculate progress percentage
+    {
+      $addFields: {
+        progressPercentage: {
+          $cond: {
+            if: { $gt: ['$moduleCount', 0] },
+            then: {
+              $multiply: [
+                { $divide: ['$completedModules', '$moduleCount'] },
+                100,
+              ],
+            },
+            else: 0,
+          },
+        },
+      },
+    },
+
+    // Project final structure
+    {
+      $project: {
+        __v: 0,
+        students: 0,
+      },
+    },
+
+    // Sort by enrollment date (most recent first)
+    {
+      $sort: { 'enrollmentInfo.enrollmentDate': -1 },
+    },
+  ]);
+
+  return {
+    courses,
+    total: courses.length,
+    enrolledCoursesCount: courses.length,
+  };
+};
+
 export const CourseServices = {
   createCourseIntoDB,
   getAllCoursesFromDB,
@@ -198,4 +354,5 @@ export const CourseServices = {
   updateCourseByIdIntoDB,
   deleteCourseFromDB,
   enrollCourseIntoDB,
+  getUserCoursesFromDB,
 };

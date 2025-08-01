@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { UserData } from "@/types/auth";
-import { deleteUser, getAllUsers, getUserInfo, getUserStats, updateUser, updateUserInfo } from "@/utils/user";
+import { deleteUser, getAllUsers, getUserCourses, getUserInfo, getUserStats, updateUser, updateUserInfo } from "@/utils/user";
 
 export function useUsers(params?: {
   page?: number;
@@ -67,6 +67,16 @@ export function useUserStats() {
   return useQuery({
     queryKey: ["user-stats"],
     queryFn: getUserStats,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useUserCourses(userId: string) {
+  return useQuery({
+    queryKey: ["user-courses", userId],
+    queryFn: () => getUserCourses(userId),
+    enabled: !!userId,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
   });

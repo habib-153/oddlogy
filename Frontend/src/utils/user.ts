@@ -1,7 +1,7 @@
 
 import axiosInstance from "@/lib/AxiosInstance";
 import { TUserStats, UserData } from "@/types/auth";
-import { TCourse } from "@/types/course";
+import { TCourse, TUserCoursesResponse } from "@/types/course";
 
 export async function getUserInfo(userId: string): Promise<UserData | null> {
   try {
@@ -29,9 +29,14 @@ export async function updateUserInfo(userId: string, data: Partial<UserData>): P
   }
 }
 
-export async function getUserCourses(userId: string): Promise<TCourse[]> {
-  const res = await axiosInstance.get(`/users/${userId}/courses`);
-  return res.data.data || [];
+export async function getUserCourses(userId: string): Promise<TUserCoursesResponse> {
+  try {
+    const res = await axiosInstance.get(`/courses/user/${userId}`);
+    return res.data.data || { courses: [], total: 0, enrolledCoursesCount: 0 };
+  } catch (error) {
+    console.error("Error fetching user courses:", error);
+    return { courses: [], total: 0, enrolledCoursesCount: 0 };
+  }
 }
 
 export async function getAllUsers(params?: {

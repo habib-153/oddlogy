@@ -37,8 +37,8 @@ export default function DashboardLayout({
 
   // Get user from either source
   const user = session?.user || authUser;
-  const userRole = role || user?.role || "user";
-  console.log(user)
+  const userRole = role || user?.role 
+
   const handleLogout = async () => {
     if (session) {
       await signOut({ redirect: false });
@@ -49,7 +49,7 @@ export default function DashboardLayout({
     router.push("/");
   };
 
-  const sidebarConfig = getSidebarConfig(userRole);
+  const sidebarConfig = getSidebarConfig(userRole as string);
 
   const getUserInitials = (name?: string) => {
     if (!name) return "U";
@@ -137,7 +137,7 @@ export default function DashboardLayout({
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  router.push(`/${userRole.toLowerCase()}/profile`)
+                  router.push(`/${(userRole as string).toLowerCase()}/profile`)
                 }
               >
                 <User className="mr-2 h-4 w-4" />

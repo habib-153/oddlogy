@@ -52,6 +52,7 @@ const deleteInstructorById = catchAsync(async (req, res) => {
 
 const getInstructorCourses = catchAsync(async (req, res) => {
     const user = req.user;
+
     const result = await InstructorServices.getInstructorCourses(user);
 
     sendResponse(res, {
