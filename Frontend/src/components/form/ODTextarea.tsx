@@ -12,6 +12,7 @@ interface IProps {
   required?: boolean;
   rows?: number;
   className?: string;
+  onChange?: (value: string) => void;
 }
 
 export default function ODTextarea({
@@ -21,6 +22,7 @@ export default function ODTextarea({
   required = false,
   rows = 3,
   className,
+  onChange,
 }: IProps) {
   const {
     register,
@@ -46,9 +48,11 @@ export default function ODTextarea({
         )}
         {...register(name, {
           required: required ? `${label} is required` : false,
+          onChange: (e) => {
+            if (onChange) onChange(e.target.value);
+          },
         })}
       />
-
       {hasError && (
         <p className="text-sm text-red-500 mt-1">{error.message as string}</p>
       )}

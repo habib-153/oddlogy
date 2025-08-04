@@ -8,7 +8,7 @@ import ODInput from "@/components/form/ODInput";
 import ODSelect from "@/components/form/ODSelect";
 import ODTextarea from "@/components/form/ODTextarea";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Image, X } from "lucide-react";
+import { Upload, Image, X, Video } from "lucide-react";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
@@ -138,6 +138,38 @@ const ModernFileUpload = ({
   );
 };
 
+const IFramePreview = ({ iframeCode }: { iframeCode: string }) => {
+  if (!iframeCode.trim()) return null;
+
+  // Extract src from iframe for preview
+  const srcMatch = iframeCode.match(/src="([^"]+)"/);
+  const src = srcMatch ? srcMatch[1] : null;
+
+  if (!src) {
+    return (
+      <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-sm text-red-600">Invalid iframe code</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+      <p className="text-sm text-blue-600 mb-2">Preview:</p>
+      <div className="aspect-video bg-black rounded-lg overflow-hidden">
+        <iframe
+          src={src}
+          title="Video Preview"
+          className="w-full h-full"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    </div>
+  );
+};
+
 interface AddCourseModalProps {
   onSuccess: () => void;
 }
@@ -147,6 +179,7 @@ export default function AddCourseModal({ onSuccess }: AddCourseModalProps) {
   const { mutate: addCourse, isPending } = useAddCourse();
   const { data: instructors = [], isLoading: loadingInstructors } =
     useInstructors();
+const [iframePreview, setIframePreview] = useState("");
 
   const courseTypes = [
     { value: "free", label: "Free" },
@@ -172,14 +205,15 @@ export default function AddCourseModal({ onSuccess }: AddCourseModalProps) {
   }));
 
   const onSubmit = (data: any) => {
-    // Extract files from form data
-    const { banner, thumbnail, ...courseData } = data;
+    const { banner, thumbnail, intro_video, ...courseData } = data;
 
-    // Prepare submission data
     const submissionData = {
       ...courseData,
       ...(banner && { banner }),
       ...(thumbnail && { thumbnail }),
+      media: {
+        intro_video: intro_video || "",
+      },
     };
 
     addCourse(submissionData, {
@@ -227,9 +261,9 @@ export default function AddCourseModal({ onSuccess }: AddCourseModalProps) {
               <div className="md:col-span-2">
                 <ODTextarea
                   name="description"
-                  label="Course Description"
-                  placeholder="Describe what students will learn and achieve"
-                  required
+                  label="Description"
+                  placeholder='Write a brief description of the course'
+                  rows={4}
                 />
               </div>
 
@@ -282,7 +316,7 @@ export default function AddCourseModal({ onSuccess }: AddCourseModalProps) {
                 name="price"
                 label="Regular Price"
                 type="number"
-                placeholder="Enter price in USD"
+                placeholder="Enter price in BDT"
               />
 
               <ODInput
@@ -314,12 +348,31 @@ export default function AddCourseModal({ onSuccess }: AddCourseModalProps) {
                 accept="image/*"
               />
 
-              <div className="md:col-span-2">
-                <ODInput
+              <div className="md:col-span-2 space-y-3">
+                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Video className="w-4 h-4" />
+                  Intro Video iFrame (Optional)
+                </label>
+                <ODTextarea
                   name="intro_video"
-                  label="Intro Video URL (Optional)"
-                  placeholder="https://youtube.com/watch?v=..."
+                  label="Intro Video iFrame"
+                  placeholder='Paste complete iframe code from YouTube:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/BnhfnM_rgCs?si=WeLIxWwbXwTxAO-W" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
+                  rows={6}
+                  onChange={(value) => setIframePreview(value)}
                 />
+                <div className="text-xs text-gray-500 space-y-1">
+                  <p>
+                    • Go to YouTube video → Share → Embed → Copy the iframe code
+                  </p>
+                  <p>• Paste the complete iframe HTML code above</p>
+                  <p>
+                    • The video will be displayed in the course intro section
+                  </p>
+                </div>
+
+                {/* Live Preview */}
+                <IFramePreview iframeCode={iframePreview} />
               </div>
             </div>
           </div>

@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -37,6 +38,7 @@ interface DynamicSidebarProps {
   config: SidebarConfig;
   collapsed?: boolean;
   onToggle?: () => void;
+  isMobile?: boolean;
 }
 
 const sidebarConfigs: Record<string, SidebarConfig> = {
@@ -62,23 +64,6 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
         title: "User Management",
         href: "/admin/user-management",
         icon: Users,
-        // children: [
-        //   {
-        //     title: "All Users",
-        //     href: "/admin/users",
-        //     icon: Users,
-        //   },
-        //   {
-        //     title: "Instructors",
-        //     href: "/admin/instructors",
-        //     icon: GraduationCap,
-        //   },
-        //   {
-        //     title: "Students",
-        //     href: "/admin/students",
-        //     icon: User,
-        //   },
-        // ],
       },
       {
         title: "Carousel Management",
@@ -110,26 +95,6 @@ const sidebarConfigs: Record<string, SidebarConfig> = {
         href: "/user/profile",
         icon: User,
       },
-      // {
-      //   title: "Assignments",
-      //   href: "/user/assignments",
-      //   icon: FileText,
-      // },
-      // {
-      //   title: "Schedule",
-      //   href: "/user/schedule",
-      //   icon: Calendar,
-      // },
-      // {
-      //   title: "Messages",
-      //   href: "/user/messages",
-      //   icon: Mail,
-      // },
-      // {
-      //   title: "Settings",
-      //   href: "/user/settings",
-      //   icon: Settings,
-      // },
     ],
   },
   instructor: {
@@ -158,6 +123,7 @@ export function DynamicSidebar({
   config,
   collapsed = false,
   onToggle,
+  isMobile = false,
 }: DynamicSidebarProps) {
   const pathname = usePathname();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
@@ -174,6 +140,12 @@ export function DynamicSidebar({
     return pathname === href || pathname.startsWith(href + "/");
   };
 
+  const handleLinkClick = () => {
+    if (isMobile && onToggle) {
+      onToggle();
+    }
+  };
+
   const renderSidebarItem = (item: SidebarItem, level = 0) => {
     const Icon = item.icon;
     const hasChildren = item.children && item.children.length > 0;
@@ -186,14 +158,14 @@ export function DynamicSidebar({
           <Button
             variant={active ? "secondary" : "ghost"}
             className={cn(
-              "w-full justify-start gap-2 px-3",
+              "w-full justify-start gap-2 px-3 h-10",
               level > 0 && "ml-4 w-[calc(100%-1rem)]",
-              collapsed && "justify-center px-2"
+              collapsed && !isMobile && "justify-center px-2"
             )}
             onClick={() => toggleExpanded(item.title)}
           >
             <Icon className="h-4 w-4 shrink-0" />
-            {!collapsed && (
+            {(!collapsed || isMobile) && (
               <>
                 <span className="truncate">{item.title}</span>
                 <ChevronRight
@@ -204,7 +176,7 @@ export function DynamicSidebar({
                 />
               </>
             )}
-            {item.badge && !collapsed && (
+            {item.badge && (!collapsed || isMobile) && (
               <span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
                 {item.badge}
               </span>
@@ -214,16 +186,18 @@ export function DynamicSidebar({
           <Button
             variant={active ? "secondary" : "ghost"}
             className={cn(
-              "w-full justify-start gap-2 px-3",
+              "w-full justify-start gap-2 px-3 h-10",
               level > 0 && "ml-4 w-[calc(100%-1rem)]",
-              collapsed && "justify-center px-2"
+              collapsed && !isMobile && "justify-center px-2"
             )}
             asChild
           >
-            <Link href={item.href}>
+            <Link href={item.href} onClick={handleLinkClick}>
               <Icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span className="truncate">{item.title}</span>}
-              {item.badge && !collapsed && (
+              {(!collapsed || isMobile) && (
+                <span className="truncate">{item.title}</span>
+              )}
+              {item.badge && (!collapsed || isMobile) && (
                 <span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
                   {item.badge}
                 </span>
@@ -232,7 +206,7 @@ export function DynamicSidebar({
           </Button>
         )}
 
-        {hasChildren && isExpanded && !collapsed && (
+        {hasChildren && isExpanded && (!collapsed || isMobile) && (
           <div className="space-y-1 ml-2">
             {item.children?.map((child) => renderSidebarItem(child, level + 1))}
           </div>
@@ -245,12 +219,13 @@ export function DynamicSidebar({
     <div
       className={cn(
         "flex h-full flex-col border-r bg-muted/10 transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+        collapsed && !isMobile ? "w-14" : "w-64",
+        isMobile && "bg-background shadow-xl"
       )}
     >
       <div className="flex h-14 items-center border-b px-3">
-        {!collapsed && (
-          <Link href='/'>
+        {(!collapsed || isMobile) && (
+          <Link href="/" onClick={handleLinkClick}>
             <h2 className="text-lg font-semibold truncate">{config.title}</h2>
           </Link>
         )}
@@ -258,10 +233,12 @@ export function DynamicSidebar({
           <Button
             variant="ghost"
             size="sm"
-            className={cn("ml-auto", collapsed && "mx-auto")}
+            className={cn("ml-auto p-2", collapsed && !isMobile && "mx-auto")}
             onClick={onToggle}
           >
-            {collapsed ? (
+            {isMobile ? (
+              <X className="h-4 w-4" />
+            ) : collapsed ? (
               <ChevronRight className="h-4 w-4" />
             ) : (
               <ChevronLeft className="h-4 w-4" />
@@ -275,10 +252,18 @@ export function DynamicSidebar({
           {config.items.map((item) => renderSidebarItem(item))}
         </div>
       </ScrollArea>
+
+      {/* Mobile Footer */}
+      {isMobile && (
+        <div className="border-t p-3">
+          <p className="text-xs text-muted-foreground text-center">
+            Oddlogy Learning Platform
+          </p>
+        </div>
+      )}
     </div>
   );
 }
-
 
 // Helper function to get sidebar config by role (client only)
 export const getSidebarConfig = (role: string): SidebarConfig => {
@@ -287,7 +272,19 @@ export const getSidebarConfig = (role: string): SidebarConfig => {
 
 // Client wrapper for DynamicSidebar to be used in server components
 import { FC } from "react";
-export const SidebarClient: FC<{ role: string; collapsed?: boolean; onToggle?: () => void }> = ({ role, collapsed, onToggle }) => {
+export const SidebarClient: FC<{
+  role: string;
+  collapsed?: boolean;
+  onToggle?: () => void;
+  isMobile?: boolean;
+}> = ({ role, collapsed, onToggle, isMobile }) => {
   "use client";
-  return <DynamicSidebar config={getSidebarConfig(role)} collapsed={collapsed} onToggle={onToggle} />;
+  return (
+    <DynamicSidebar
+      config={getSidebarConfig(role)}
+      collapsed={collapsed}
+      onToggle={onToggle}
+      isMobile={isMobile}
+    />
+  );
 };
