@@ -333,7 +333,7 @@ export default function UserCourseDetailsPage({
                 "border-0 shadow-sm",
                 "lg:relative lg:z-auto", // Normal positioning on large screens
                 sidebarOpen &&
-                  "lg:hidden fixed top-4 right-4 bottom-4 w-80 max-w-[90vw] z-50 overflow-hidden" // Fixed positioning on mobile when open
+                "lg:hidden fixed top-4 right-4 bottom-4 w-80 max-w-[90vw] z-50 overflow-hidden" // Fixed positioning on mobile when open
               )}
             >
               <CardHeader className="flex flex-row items-center justify-between pb-3">
